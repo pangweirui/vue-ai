@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AuthLayout: typeof import('./src/components/AuthLayout.vue')['default']
     BackEndLayout: typeof import('./src/components/BackEndLayout.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -29,9 +30,9 @@ declare module 'vue' {
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
-    ElOptions: typeof import('element-plus/es')['ElOptions']
     ElRow: typeof import('element-plus/es')['ElRow']
-    ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElTable: typeof import('element-plus/es')['ElTable']
+    ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     PageHead: typeof import('./src/components/pageHead.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

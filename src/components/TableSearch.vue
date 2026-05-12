@@ -16,7 +16,7 @@
               v-model="formData[item.prop]"
             >
             <template v-if="item.comp==='select'">
-              <el-option label="全部" value="0"></el-option>
+              <el-option label="全部" value=""></el-option>
               <el-option
                 v-for="option in item.options ?? []"
                 :key="option.value"

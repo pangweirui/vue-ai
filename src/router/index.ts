@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import BackEndLayout from '@/components/BackEndLayout.vue'
+import AuthLayout from '@/components/AuthLayout.vue'
 
 const backendRoutes: RouteRecordRaw[] = [
   {
@@ -8,7 +9,7 @@ const backendRoutes: RouteRecordRaw[] = [
     component: BackEndLayout,
     children: [
       {
-        path: 'dashBoard',
+        path: 'dashboard',
         component: () => import('@/views/dashBoard.vue'),
         meta:{
           title:'数据分析',
@@ -36,6 +37,28 @@ const backendRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/emotional.vue'),
         meta:{
           title:'情绪日志',
+          icon:'User'
+        }
+      }
+    ]
+  },
+  {
+    path:'/auth',
+    component: AuthLayout,
+    children: [
+      {
+        path:'login',
+        component: () => import('@/views/login.vue'),
+        meta:{
+          title:'登录',
+          icon:'Login'
+        }
+      },
+      {
+        path:'register',
+        component: () => import('@/views/register.vue'),
+        meta:{
+          title:'注册',
           icon:'User'
         }
       }

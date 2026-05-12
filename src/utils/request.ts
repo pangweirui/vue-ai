@@ -1,0 +1,44 @@
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
+import {router} from '@/router'
+
+const request = axios.create({
+  baseURL: '/api',
+  timeout: 5000
+})
+
+request.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
+
+request.interceptors.response.use(
+  response => {
+    const {data}=response
+    if(data.code==='200'){
+      if(data.data?.token){
+        localStorage.setItem('token',data.data.token)
+      }
+      return data.data
+    }else if(data.code==='-1'){
+        router.push('/auth/login')
+        return Promise.reject(data)
+    }else{
+      ElMessage.error(data.msg)
+      return Promise.reject(data)
+    }
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
+
+export default request

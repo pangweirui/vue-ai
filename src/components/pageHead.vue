@@ -20,7 +20,9 @@ const props = defineProps({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
-  background-color: #f5f7fa;
+  margin-bottom: 20px;
+  .page-title{
+    font-size: 24px;
+  }
 }
 </style>
