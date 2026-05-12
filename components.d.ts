@@ -11,12 +11,14 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ArticleDialog: typeof import('./src/components/ArticleDialog.vue')['default']
     AuthLayout: typeof import('./src/components/AuthLayout.vue')['default']
     BackEndLayout: typeof import('./src/components/BackEndLayout.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElContainer: typeof import('element-plus/es')['ElContainer']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
@@ -32,8 +34,10 @@ declare module 'vue' {
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElRow: typeof import('element-plus/es')['ElRow']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     PageHead: typeof import('./src/components/pageHead.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -1,8 +1,7 @@
 <template>
   <div>
     <PageHead #buttons title="知识文章">
-      <el-button type="primary">新增</el-button>
-      <el-button type="primary">编辑</el-button>
+      <el-button type="primary" @click="dialogVisible=true">新增</el-button>
     </PageHead>
     <TableSearch :formItem="formItem" @search="handleSearch"/>
     <el-table :data="tableData" style="width: 100%;margin-top: 25px;">
@@ -60,6 +59,7 @@
       :page-size="pagination.size"
       @change="handleChange"
     />
+    <ArticleDialog v-model="dialogVisible" :categories="categories" :tagArray="commonTags" />
   </div>
 </template>
 
@@ -68,12 +68,13 @@ import { onMounted, ref, reactive } from 'vue'
 import { categoryList,articlePage } from '@/apis/admin'
 import PageHead from '@/components/pageHead.vue'
 import TableSearch from '@/components/TableSearch.vue'
+import ArticleDialog from '@/components/ArticleDialog.vue'
 
+// 搜索表单
 type SearchOption = {
   label: string
   value: string | number
 }
-
 type FormItem = {
   comp: 'input' | 'select'
   prop: string
@@ -81,7 +82,6 @@ type FormItem = {
   placeholder?: string
   options?: SearchOption[]
 }
-
 const formItem=reactive<FormItem[]>([
   {comp:'input',prop:'title',label:'文章标题',placeholder:'请输入文章标题'},
   {comp:'select',prop:'categoryId',label:'分类',placeholder:'请选择分类'},
@@ -92,32 +92,43 @@ const formItem=reactive<FormItem[]>([
   ]}
 ])
 
+// 分页
 const pagination=reactive({
   currentPage:1,
-  size:5,
+  size:10,
   total:0
 })
 const tableData=ref<any[]>([])
+// 搜索
 const handleSearch=async (formData:any)=>{
   const params=Object.fromEntries(Object.entries({
     ...pagination,
     ...formData
-  }).filter(([, value]) => value !== ''))
+  }).filter(([, value]) => value !== '' && value !== 'all'))
   const data = await articlePage(params)
   tableData.value=data.records
   pagination.total=data.total
   pagination.currentPage=data.current
   pagination.size=data.size
 }
-
+// 分页
 const handleChange=(val:number)=>{
   pagination.currentPage=val
   handleSearch({})
 }
 
+// 分类
 const categories=ref<SearchOption[]>([])
 const categoryMap=reactive<Record<string | number, string>>({})
 
+//新增和编辑文章
+const dialogVisible=ref(false)
+//文章标签
+const commonTags = [
+  '情绪管理', '焦虑', '抑郁', '压力', '睡眠', 
+  '冥想', '正念', '放松', '心理健康', '自我成长',
+  '人际关系', '工作压力', '学习方法', '生活技巧'
+]
 onMounted(async ()=>{
   const res = await categoryList()
   categories.value=(res ?? []).map((item)=>{
