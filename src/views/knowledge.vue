@@ -53,6 +53,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      style="margin-top: 25px;position: absolute;right: 0;"
+      layout=" prev, pager, next"
+      :total="pagination.total"
+      :page-size="pagination.size"
+      @change="handleChange"
+    />
   </div>
 </template>
 
@@ -87,7 +94,7 @@ const formItem=reactive<FormItem[]>([
 
 const pagination=reactive({
   currentPage:1,
-  size:10,
+  size:5,
   total:0
 })
 const tableData=ref<any[]>([])
@@ -98,6 +105,14 @@ const handleSearch=async (formData:any)=>{
   }).filter(([, value]) => value !== ''))
   const data = await articlePage(params)
   tableData.value=data.records
+  pagination.total=data.total
+  pagination.currentPage=data.current
+  pagination.size=data.size
+}
+
+const handleChange=(val:number)=>{
+  pagination.currentPage=val
+  handleSearch({})
 }
 
 const categories=ref<SearchOption[]>([])
