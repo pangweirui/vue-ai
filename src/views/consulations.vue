@@ -22,7 +22,7 @@
       <el-table-column prop="lastMessageTime" label="咨询时间" width="100" align="center" />
       <el-table-column label="操作" width="200" fixed="right" align="center">
         <template #default="scope">
-          <el-button type="primary" text size="mini" @click="handleDetail(scope.row)">详情</el-button>
+          <el-button type="primary" text @click="handleDetail(scope.row)">详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -33,14 +33,19 @@
       @current-change="handleConsulationsList"
       style="position: absolute;right: 0;"
     />
+    <ConsulationDialog
+      v-model="dialogVisible"
+      :session-detail="sessionDetail"
+      :session-info="currentSession"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import {getConsulationsPage} from '@/apis/admin'
+import {getConsulationsPage,getSessionDetail} from '@/apis/admin'
 import PageHead from '@/components/pageHead.vue'
-
+import ConsulationDialog from '@/components/ConsulationDialog.vue'
 
 const tableData = ref([])
 const loading = ref(true)
@@ -51,6 +56,7 @@ const pagination = reactive({
   size: 10
 })
 
+//获取咨询记录列表
 const getConsulationsList=async()=>{
   loading.value = true
   try {
@@ -65,10 +71,21 @@ const getConsulationsList=async()=>{
   }
 }
 
-const handleDetail=(row)=>{
-  console.log(row)
-}
+//会话详情弹窗
+const dialogVisible = ref(false)
 
+//获取会话详情
+const sessionDetail = ref([])
+const currentSession = ref({})
+const handleDetail=(async (row)=>{
+  dialogVisible.value = true
+  currentSession.value = row
+  const res = await getSessionDetail(row.id)
+  console.log(res);
+  sessionDetail.value = res
+})
+
+//分页
 const handleConsulationsList=(val)=>{
   pagination.currentPage=val
   getConsulationsList()

@@ -14,6 +14,7 @@ declare module 'vue' {
     ArticleDialog: typeof import('./src/components/ArticleDialog.vue')['default']
     AuthLayout: typeof import('./src/components/AuthLayout.vue')['default']
     BackEndLayout: typeof import('./src/components/BackEndLayout.vue')['default']
+    ConsulationDialog: typeof import('./src/components/ConsulationDialog.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']

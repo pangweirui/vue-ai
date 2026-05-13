@@ -78,3 +78,8 @@ export function deleteArticle(id:string | number) {
 export function getConsulationsPage(params:any) {
   return request.get<unknown, PageResult>('/psychological-chat/sessions',{params})
 }
+
+//获取会话列表
+export function getSessionDetail(sessionId:string | number) {
+  return request.get<unknown, PageResult>(`/psychological-chat/sessions/${sessionId}/messages`)
+}
