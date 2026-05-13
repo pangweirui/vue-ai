@@ -27,7 +27,8 @@ export const articlePage = (params: any) => {
   return request.get<unknown, ArticlePageResult>('/knowledge/article/page',{params})
 } 
 
-export function uploadFile(file,businessInfo) {
+//上传文件
+export function uploadFile(file:File,businessInfo:any) {
   const formData=new FormData()
   formData.append('file',file)
   formData.append('businessType','ARTICLE')
@@ -38,4 +39,19 @@ export function uploadFile(file,businessInfo) {
       'Content-Type':'multipart/form-data'
     }
   })
+}
+
+//新增文章
+export function createArticle(data:any) {
+  return request.post('/knowledge/article', data)
+}
+
+//获取文章详情
+export function  getArticleDetail(id:string) {
+  return request.get<unknown, any>(`/knowledge/article/${id}`)
+}
+
+//更新文章
+export function updateArticle(id:string,data:any) {
+  return request.put(`/knowledge/article/${id}`, data)
 }

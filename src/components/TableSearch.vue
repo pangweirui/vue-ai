@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="formData">
+  <el-form ref="formRef" :model="formData">
     <el-row :gutter="24">
       <template 
       v-for="item in formItemAttr"
@@ -38,14 +38,16 @@
 </template>
 
 <script setup lang="ts">
-import {reactive,computed} from 'vue'
+import {reactive,computed,ref} from 'vue'
 import { ElInput, ElSelect } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 import 'element-plus/es/components/input/style/css'
 import 'element-plus/es/components/select/style/css'
 import 'element-plus/es/components/option/style/css'
 
-const emit = defineEmits(['search'])
+const emit = defineEmits(['search','reset'])
 
+const formRef = ref<FormInstance>()
 const formData = reactive<Record<string, OptionValue>>({})
 
 type OptionValue = string | number
@@ -87,9 +89,9 @@ const handleSearch = () => {
   emit('search', formData)
 }
 
-const handleReset = (form:any) => {
-  if(!form) return
-  form.resetFields()
+const handleReset = () => {
+  formRef.value?.resetFields()
+  emit('reset')
 }
 </script>
 

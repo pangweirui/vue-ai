@@ -1,9 +1,9 @@
 <template>
   <div>
     <PageHead #buttons title="知识文章">
-      <el-button type="primary" @click="dialogVisible=true">新增</el-button>
+      <el-button type="primary" @click="handleCreate">新增</el-button>
     </PageHead>
-    <TableSearch :formItem="formItem" @search="handleSearch"/>
+    <TableSearch :formItem="formItem" @search="handleSearch" @reset="handleReset" />
     <el-table :data="tableData" style="width: 100%;margin-top: 25px;">
       <el-table-column prop="title" label="文章标题" fixed="left" width="300" header-align="center">
         <template #default="scope">
@@ -37,14 +37,14 @@
       <el-table-column prop="createTime" label="发布时间" width="200" header-align="center">
         <template #default="scope">
           <div style="display: flex;align-items: center;justify-content: center;">
-            <span>{{scope.row.createdAt}}</span>
+            <span>{{scope.row.updatedAt}}</span>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="操作" fixed="right" width="180" header-align="center">
         <template #default="scope">
           <div style="display: flex;align-items: center;justify-content: center;">
-            <el-button text type="primary">编辑</el-button>
+            <el-button text type="primary" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button v-if="scope.row.status===0||scope.row.status===2" text type="primary">发布</el-button>
             <el-button v-if="scope.row.status===1" text type="warning" >下线</el-button>
             <el-button v-if="scope.row.status===2" text type="danger" >删除</el-button>
@@ -59,13 +59,13 @@
       :page-size="pagination.size"
       @change="handleChange"
     />
-    <ArticleDialog v-model="dialogVisible" :categories="categories" :tagArray="commonTags" />
+    <ArticleDialog v-model="dialogVisible" :categories="categories" :tagArray="commonTags" :currentArticle="currentArticle" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue'
-import { categoryList,articlePage } from '@/apis/admin'
+import { categoryList,articlePage,getArticleDetail } from '@/apis/admin'
 import PageHead from '@/components/pageHead.vue'
 import TableSearch from '@/components/TableSearch.vue'
 import ArticleDialog from '@/components/ArticleDialog.vue'
@@ -99,22 +99,37 @@ const pagination=reactive({
   total:0
 })
 const tableData=ref<any[]>([])
-// 搜索
-const handleSearch=async (formData:any)=>{
-  const params=Object.fromEntries(Object.entries({
+
+const searchParams=reactive<Record<string, any>>({})
+const getList=async()=>{
+  const params={
     ...pagination,
-    ...formData
-  }).filter(([, value]) => value !== '' && value !== 'all'))
+    ...searchParams
+  }
   const data = await articlePage(params)
   tableData.value=data.records
   pagination.total=data.total
   pagination.currentPage=data.current
   pagination.size=data.size
 }
+// 搜索
+const handleSearch=async (formData:any)=>{
+  pagination.currentPage=1  
+  Object.assign(searchParams,formData)
+  await getList()
+}
+// 重置搜索表单
+const handleReset=async ()=>{
+  Object.keys(searchParams).forEach((key) => {
+    delete searchParams[key]
+  })
+  pagination.currentPage=1
+  await getList()
+}
 // 分页
-const handleChange=(val:number)=>{
+const handleChange=async (val:number)=>{
   pagination.currentPage=val
-  handleSearch({})
+  await getList()
 }
 
 // 分类
@@ -129,6 +144,21 @@ const commonTags = [
   '冥想', '正念', '放松', '心理健康', '自我成长',
   '人际关系', '工作压力', '学习方法', '生活技巧'
 ]
+
+const currentArticle=ref<any>({})
+// 新增文章
+const handleCreate=()=>{
+  currentArticle.value={}
+  dialogVisible.value=true
+}
+// 编辑文章
+const handleEdit=(async (row:any)=>{
+  currentArticle.value={}
+  const data = await getArticleDetail(row.id)
+  currentArticle.value=data
+  dialogVisible.value=true
+})
+
 onMounted(async ()=>{
   const res = await categoryList()
   categories.value=(res ?? []).map((item)=>{

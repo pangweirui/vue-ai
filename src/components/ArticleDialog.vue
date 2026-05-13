@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="新增文章"
+    :title="isEdit?'编辑文章':'新增文章'"
     v-model="dialogVisible"
     width="50%"
   >
@@ -12,9 +12,6 @@
         maxlength="200" 
         show-word-limit 
       ></el-input>
-    </el-form-item>
-    <el-form-item label="文章内容" prop="content">
-      <el-input v-model="formData.content" placeholder="请输入文章内容"></el-input>
     </el-form-item>
     <el-form-item label="分类" prop="categoryId">
       <el-select v-model="formData.categoryId" placeholder="请选择分类">
@@ -34,7 +31,7 @@
         <el-upload
           class="avatar-uploader"
           action="#"
-          :before-upload="beforeUpLoad"
+          :before-upload="beforeAvatarUpload"
           :http-request="handleUploadRequest"
           :show-file-list="false"
           accept="image/*"
@@ -50,14 +47,31 @@
       </div>
     </el-form-item>
     <el-form-item label="文章内容" prop="content">
+      <RichTextEditor 
+        v-model="formData.content" 
+        ref="editorRef"
+        placeholder="请输入文章内容"
+        :maxCharCount="1000"
+        @change="handleContentChange"
+        @created="handleEditorCreated"
+        />
     </el-form-item>
   </el-form>
+  <div v-if="btnPreview">
+    <h3>文章内容预览</h3>
+    <div v-html="formData.content"></div>
+  </div>
+  <template #footer>
+      <el-button @click="btnPreview=!btnPreview">{{ btnPreview?'隐藏预览':'预览' }}</el-button>
+      <el-button @click="handleClose">取消</el-button>
+      <el-button type="primary" @click="handleSubmit" >{{ isEdit?'编辑':'新增' }}</el-button>
+    </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { computed, reactive ,ref} from 'vue'
-import { uploadFile } from '@/apis/admin'
+import { computed,ref,reactive,nextTick,watch } from 'vue'
+import { uploadFile,createArticle,updateArticle } from '@/apis/admin'
 import { fileBaseUrl } from '@/config/index'
 import { ElMessage } from 'element-plus'
 
@@ -73,6 +87,10 @@ const props=defineProps({
   tagArray:{
     type:Array,
     default:()=>[]
+  },
+  currentArticle:{
+    type:Object,
+    default:()=>({})
   }
 })
 const emit=defineEmits(['update:modelValue'])
@@ -83,7 +101,7 @@ const dialogVisible=computed({
   set:(value)=>emit('update:modelValue',value)
 })
 //表单数据
-const formData=reactive({
+const getEmptyFormData=()=>({
   title:'',
   content:'',
   coverImage:"",
@@ -92,6 +110,7 @@ const formData=reactive({
   tags:[],
   id:""
 })
+const formData=reactive(getEmptyFormData())
 
 //表单校验规则
 const rules=reactive({
@@ -111,28 +130,103 @@ const handleAvatarSuccess = (
 }
 
 const beforeAvatarUpload = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('Avatar picture must be JPG format!')
-    return false
-  } else if (rawFile.size / 1024 / 1024 > 2) {
+  if (rawFile.size / 1024 / 1024 > 2) {
     ElMessage.error('Avatar picture size can not exceed 2MB!')
     return false
   }
   return true
 }
 
+const businessId=ref('')
+const getPreviewImageUrl=(url)=>{
+  if(!url){
+    return ''
+  }
+  if(/^https?:\/\//.test(url)||url.startsWith('blob:')||url.startsWith('data:')){
+    return url
+  }
+  return `${fileBaseUrl}${url.startsWith('/') ? '' : '/'}${url}`
+}
+const getStoredCoverImage=(url)=>{
+  if(!url){
+    return ''
+  }
+  return url.startsWith(fileBaseUrl) ? url.slice(fileBaseUrl.length) : url
+}
 //上传封面图片
 const handleUploadRequest=async ({file}) => {
-  const businessId=crypto.randomUUID()
-  const res=await uploadFile(file,{businessId})
-  imageUrl.value=fileBaseUrl+res.filePath
-  formData.coverImage=fileBaseUrl+res.filePath
+  businessId.value=crypto.randomUUID()
+  const res=await uploadFile(file,{businessId:businessId.value})
+  imageUrl.value=getPreviewImageUrl(res.filePath)
+  formData.coverImage=res.filePath
 }
 
 //移除封面图片
 const handleRemove=()=>{
   imageUrl.value=''
   formData.coverImage=''
+}
+
+//文章内容改变时触发
+const handleContentChange=(data)=>{
+  formData.content=data.html
+}
+
+//编辑文章时，回填文章内容到富文本编辑器
+const editorRef=ref(null)
+const handleEditorCreated=(editor)=>{
+  editorRef.value=editor
+  if(formData.content&&editor){
+    nextTick(()=>{
+      editor.setHtml?.(formData.content)
+    })
+  }
+}
+//是否编辑文章
+const isEdit=computed(()=>!!props.currentArticle.id)
+
+watch(()=>props.currentArticle,
+  (newVal)=>{
+    if(newVal){
+      Object.assign(formData,getEmptyFormData(),newVal)
+      businessId.value=newVal.id
+      imageUrl.value=getPreviewImageUrl(newVal.coverImage)
+    }
+})
+//预览文章内容
+const btnPreview=ref(false)
+
+const formRef=ref(null)
+const loading=ref(false)
+
+//提交表单
+const handleSubmit= () => {
+  formRef.value.validate(async (valid) => {
+    if(valid){
+      loading.value=true
+      const submitData={
+        ...formData,
+        tags:formData.tags.join(','),
+        coverImage:getStoredCoverImage(formData.coverImage)
+      }
+      if(isEdit.value){
+        await updateArticle(businessId.value,submitData)
+      }else{
+        await createArticle(businessId.value,submitData)
+      }
+      ElMessage.success('操作成功')
+      dialogVisible.value=false
+      loading.value=false
+    }
+  })
+}
+
+//关闭弹窗
+const handleClose=()=>{
+  formRef.value.resetFields()
+  businessId.value=''
+  handleRemove()
+  dialogVisible.value=false
 }
 </script>
 

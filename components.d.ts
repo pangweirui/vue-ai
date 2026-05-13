@@ -40,6 +40,7 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     PageHead: typeof import('./src/components/pageHead.vue')['default']
+    RichTextEditor: typeof import('./src/components/RichTextEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SideBar: typeof import('./src/components/SideBar.vue')['default']
