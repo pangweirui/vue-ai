@@ -37,6 +37,10 @@ request.interceptors.response.use(
     }
   },
   error => {
+    const message = error.response?.data?.msg || error.response?.data?.message || error.message
+    if (message) {
+      ElMessage.error(message)
+    }
     return Promise.reject(error)
   }
 )

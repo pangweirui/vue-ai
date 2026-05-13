@@ -48,4 +48,7 @@ declare module 'vue' {
     SideBar: typeof import('./src/components/SideBar.vue')['default']
     TableSearch: typeof import('./src/components/TableSearch.vue')['default']
   }
+  export interface GlobalDirectives {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }

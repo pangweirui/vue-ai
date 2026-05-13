@@ -4,9 +4,11 @@
       <el-button type="primary" @click="handleCreate">新增</el-button>
     </PageHead>
     <TableSearch :formItem="formItem" @search="handleSearch" @reset="handleReset" />
-    <el-table :data="tableData" style="width: 100%;margin-top: 25px;">
+    <el-table v-loading="loading" :data="tableData" style="width: 100%;margin-top: 25px;">
       <template #empty>
-        <el-empty description="暂无知识文章" />
+        <div class="table-empty">
+          <el-empty v-show="!loading" description="暂无知识文章" />
+        </div>
       </template>
       <el-table-column prop="title" label="文章标题" fixed="left" width="300" header-align="center">
         <template #default="scope">
@@ -96,6 +98,9 @@ const formItem=reactive<FormItem[]>([
   ]}
 ])
 
+// 加载中
+const loading=ref(true)
+
 // 分页
 const pagination=reactive({
   currentPage:1,
@@ -106,15 +111,20 @@ const tableData=ref<any[]>([])
 
 const searchParams=reactive<Record<string, any>>({})
 const getList=async()=>{
-  const params={
-    ...pagination,
-    ...searchParams
+  loading.value=true
+  try {
+    const params={
+      ...pagination,
+      ...searchParams
+    }
+    const data = await articlePage(params)
+    tableData.value=data.records
+    pagination.total=data.total
+    pagination.currentPage=data.current
+    pagination.size=data.size
+  } finally {
+    loading.value=false
   }
-  const data = await articlePage(params)
-  tableData.value=data.records
-  pagination.total=data.total
-  pagination.currentPage=data.current
-  pagination.size=data.size
 }
 // 搜索
 const handleSearch=async (formData:any)=>{
@@ -173,11 +183,12 @@ const handleEdit=(async (row:any)=>{
 })
 // 发布文章
 const handlePublish=(async (row:any)=>{
-  ElMessageBox.confirm('确认发布文章吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'info'
-  }).then(async () => {
+  try {
+    await ElMessageBox.confirm('确认发布文章吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'info'
+    })
     const articleId=getArticleId(row)
     if(!hasArticleId(articleId)){
       ElMessage.error('文章ID不存在')
@@ -186,15 +197,17 @@ const handlePublish=(async (row:any)=>{
     await changeArticleStatus(articleId,1)
     ElMessage.success('发布成功')
     await getList()
-  })
+  } catch {
+  }
 })
 // 下线文章
 const handleDown=(async (row:any)=>{
-  ElMessageBox.confirm('确认下线文章吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'info'
-  }).then(async () => {
+  try {
+    await ElMessageBox.confirm('确认下线文章吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'info'
+    })
     const articleId=getArticleId(row)
     if(!hasArticleId(articleId)){
       ElMessage.error('文章ID不存在')
@@ -203,16 +216,18 @@ const handleDown=(async (row:any)=>{
     await changeArticleStatus(articleId,2)
     ElMessage.success('下线成功')
     await getList()
-  })
+  } catch {
+  }
 })
 // 删除文章
 const handleDelete=(async (row:any)=>{
-  ElMessageBox.confirm('确认删除文章吗？', 
-  '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async () => {
+  try {
+    await ElMessageBox.confirm('确认删除文章吗？', 
+    '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
     const articleId=getArticleId(row)
     if(!hasArticleId(articleId)){
       ElMessage.error('文章ID不存在')
@@ -221,7 +236,8 @@ const handleDelete=(async (row:any)=>{
     await deleteArticle(articleId)
     ElMessage.success('删除成功')
     await getList()
-  })
+  } catch {
+  }
 })
 
 

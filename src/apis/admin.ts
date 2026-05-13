@@ -65,7 +65,7 @@ export function updateArticle(id:string | number,data:any) {
 }
 
 export function changeArticleStatus(id:string | number,status:number) {
-  return request.put(`/knowledge/article/${id}/status`, null, {
+  return request.put(`/knowledge/article/${id}/status`, { status }, {
     params: { status }
   })
 }

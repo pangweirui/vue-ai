@@ -227,7 +227,7 @@ const handleSubmit= () => {
       }else{
         await createArticle(submitData)
       }
-      ElMessage.success('操作成功')
+      ElMessage.success('新增成功')
       dialogVisible.value=false
       loading.value=false
     }

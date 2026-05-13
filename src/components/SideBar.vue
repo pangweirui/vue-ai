@@ -4,6 +4,8 @@
       class="menu-style"
       :collapse="isCollapse"
       :collapse-transition="false"
+      :default-active="activeMenu"
+      router
     >
       <div class="brand">
         <el-image
@@ -17,11 +19,10 @@
         </div>
       </div>
       <el-menu-item 
-        v-for="item in router.options.routes[0].children"
+        v-for="item in menuItems"
         :key="item.path"
-        :index="item.path"
+        :index="`${backendRoute.path}/${item.path}`"
         :title="item.meta?.title"
-        @click="selectMenu"
         >
         <el-icon v-if="getIcon(item.meta?.icon)">
           <component :is="getIcon(item.meta?.icon)" />
@@ -33,14 +34,18 @@
 </template>
 <script setup lang="ts">
 import {computed} from 'vue'
-import {useRouter} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import { ChatLineSquare, Message, PieChart, User } from '@element-plus/icons-vue'
 import { useAdminStore } from '@/stores/admin'
 
 const adminStore=useAdminStore()
 const isCollapse=computed(()=>adminStore.isCollapse)
 const brandStyle=computed(()=>isCollapse.value?'width: 25px; height: 25px;':'width: 50px; height: 50px;margin-right:15px;')
+const route = useRoute()
 const router = useRouter()
+const backendRoute = router.options.routes[0]
+const menuItems = backendRoute.children ?? []
+const activeMenu = computed(() => route.path)
 
 const iconMap = {
   PieChart,
@@ -59,10 +64,6 @@ const getIcon = (icon: unknown) => {
 
 const robotIcon = new URL('@/assets/images/robot.png', import.meta.url).href
 
-const selectMenu = (key:any) => {
-  const currentRoute=router.options.routes[0]
-  router.push(`${currentRoute.path}/${key.index}`)
-}
 </script>
 <style lang="scss" scoped>
 .menu-style{
