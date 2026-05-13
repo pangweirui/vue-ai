@@ -28,7 +28,7 @@ const backendRoutes: RouteRecordRaw[] = [
         path:'consulations',
         component: () => import('@/views/consulations.vue'),
         meta:{
-          title:'咨询',
+          title:'咨询记录',
           icon:'Message'
         }
       },

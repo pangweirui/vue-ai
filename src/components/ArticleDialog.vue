@@ -153,9 +153,21 @@ const getStoredCoverImage=(url)=>{
   }
   return url.startsWith(fileBaseUrl) ? url.slice(fileBaseUrl.length) : url
 }
+const normalizeTagsToArray=(tags)=>{
+  if(Array.isArray(tags)){
+    return tags
+  }
+  if(typeof tags === 'string'){
+    return tags ? tags.split(',').filter(Boolean) : []
+  }
+  return []
+}
+const normalizeTagsToString=(tags)=>{
+  return Array.isArray(tags) ? tags.join(',') : tags || ''
+}
 //上传封面图片
 const handleUploadRequest=async ({file}) => {
-  businessId.value=crypto.randomUUID()
+  businessId.value=businessId.value||crypto.randomUUID()
   const res=await uploadFile(file,{businessId:businessId.value})
   imageUrl.value=getPreviewImageUrl(res.filePath)
   formData.coverImage=res.filePath
@@ -189,6 +201,7 @@ watch(()=>props.currentArticle,
   (newVal)=>{
     if(newVal){
       Object.assign(formData,getEmptyFormData(),newVal)
+      formData.tags=normalizeTagsToArray(newVal.tags)
       businessId.value=newVal.id
       imageUrl.value=getPreviewImageUrl(newVal.coverImage)
     }
@@ -206,13 +219,13 @@ const handleSubmit= () => {
       loading.value=true
       const submitData={
         ...formData,
-        tags:formData.tags.join(','),
+        tags:normalizeTagsToString(formData.tags),
         coverImage:getStoredCoverImage(formData.coverImage)
       }
       if(isEdit.value){
-        await updateArticle(businessId.value,submitData)
+        await updateArticle(formData.id,submitData)
       }else{
-        await createArticle(businessId.value,submitData)
+        await createArticle(submitData)
       }
       ElMessage.success('操作成功')
       dialogVisible.value=false

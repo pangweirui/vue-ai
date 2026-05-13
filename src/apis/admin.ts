@@ -47,11 +47,34 @@ export function createArticle(data:any) {
 }
 
 //获取文章详情
-export function  getArticleDetail(id:string) {
+export function  getArticleDetail(id:string | number) {
   return request.get<unknown, any>(`/knowledge/article/${id}`)
 }
 
+export type PageResult<T = any> = {
+  records: T[]
+  total: number
+  size: number
+  current: number
+  pages: number
+}
+
 //更新文章
-export function updateArticle(id:string,data:any) {
+export function updateArticle(id:string | number,data:any) {
   return request.put(`/knowledge/article/${id}`, data)
+}
+
+export function changeArticleStatus(id:string | number,status:number) {
+  return request.put(`/knowledge/article/${id}/status`, null, {
+    params: { status }
+  })
+}
+
+export function deleteArticle(id:string | number) {
+  return request.delete(`/knowledge/article/${id}`)
+}
+
+//咨询记录
+export function getConsulationsPage(params:any) {
+  return request.get<unknown, PageResult>('/psychological-chat/sessions',{params})
 }

@@ -5,6 +5,9 @@
     </PageHead>
     <TableSearch :formItem="formItem" @search="handleSearch" @reset="handleReset" />
     <el-table :data="tableData" style="width: 100%;margin-top: 25px;">
+      <template #empty>
+        <el-empty description="暂无知识文章" />
+      </template>
       <el-table-column prop="title" label="文章标题" fixed="left" width="300" header-align="center">
         <template #default="scope">
           <div style="display: flex;align-items: center;">
@@ -45,9 +48,9 @@
         <template #default="scope">
           <div style="display: flex;align-items: center;justify-content: center;">
             <el-button text type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button v-if="scope.row.status===0||scope.row.status===2" text type="primary">发布</el-button>
-            <el-button v-if="scope.row.status===1" text type="warning" >下线</el-button>
-            <el-button v-if="scope.row.status===2" text type="danger" >删除</el-button>
+            <el-button v-if="scope.row.status===0||scope.row.status===2" @click="handlePublish(scope.row)" text type="primary">发布</el-button>
+            <el-button v-if="scope.row.status===1" @click="handleDown(scope.row)" text type="warning" >下线</el-button>
+            <el-button v-if="scope.row.status===2" @click="handleDelete(scope.row)" text type="danger" >删除</el-button>
           </div>
         </template>
       </el-table-column>
@@ -65,10 +68,11 @@
 
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue'
-import { categoryList,articlePage,getArticleDetail } from '@/apis/admin'
+import { categoryList,articlePage,getArticleDetail ,changeArticleStatus,deleteArticle} from '@/apis/admin'
 import PageHead from '@/components/pageHead.vue'
 import TableSearch from '@/components/TableSearch.vue'
 import ArticleDialog from '@/components/ArticleDialog.vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 搜索表单
 type SearchOption = {
@@ -146,6 +150,8 @@ const commonTags = [
 ]
 
 const currentArticle=ref<any>({})
+const getArticleId=(row:any)=>row.id ?? row.articleId
+const hasArticleId=(id:any)=>id!==undefined&&id!==null&&id!==''
 // 新增文章
 const handleCreate=()=>{
   currentArticle.value={}
@@ -153,11 +159,71 @@ const handleCreate=()=>{
 }
 // 编辑文章
 const handleEdit=(async (row:any)=>{
+  const articleId=getArticleId(row)
+  if(!hasArticleId(articleId)){
+    ElMessage.error('文章ID不存在')
+    return
+  }
   currentArticle.value={}
-  const data = await getArticleDetail(row.id)
+  const data = await getArticleDetail(articleId)
   currentArticle.value=data
   dialogVisible.value=true
+  await getList()
+  ElMessage.success('编辑成功')
 })
+// 发布文章
+const handlePublish=(async (row:any)=>{
+  ElMessageBox.confirm('确认发布文章吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'info'
+  }).then(async () => {
+    const articleId=getArticleId(row)
+    if(!hasArticleId(articleId)){
+      ElMessage.error('文章ID不存在')
+      return
+    }
+    await changeArticleStatus(articleId,1)
+    ElMessage.success('发布成功')
+    await getList()
+  })
+})
+// 下线文章
+const handleDown=(async (row:any)=>{
+  ElMessageBox.confirm('确认下线文章吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'info'
+  }).then(async () => {
+    const articleId=getArticleId(row)
+    if(!hasArticleId(articleId)){
+      ElMessage.error('文章ID不存在')
+      return
+    }
+    await changeArticleStatus(articleId,2)
+    ElMessage.success('下线成功')
+    await getList()
+  })
+})
+// 删除文章
+const handleDelete=(async (row:any)=>{
+  ElMessageBox.confirm('确认删除文章吗？', 
+  '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    const articleId=getArticleId(row)
+    if(!hasArticleId(articleId)){
+      ElMessage.error('文章ID不存在')
+      return
+    }
+    await deleteArticle(articleId)
+    ElMessage.success('删除成功')
+    await getList()
+  })
+})
+
 
 onMounted(async ()=>{
   const res = await categoryList()
@@ -169,6 +235,7 @@ onMounted(async ()=>{
     }
   })
   formItem[1].options=categories.value
+  await getList()
 })
 </script>
 
