@@ -36,6 +36,9 @@ const handleCollapse=()=>{
 }
 
 const handleCommand = (command: string) => {
+  if (command === 'logout') {
+    adminStore.logout()
+  }
 }
 
 </script>
