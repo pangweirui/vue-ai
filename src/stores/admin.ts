@@ -7,8 +7,10 @@ export const useAdminStore = defineStore('admin', ()=>{
   const toggleCollapse=()=>{
     isCollapse.value=!isCollapse.value
   }
+  
   return{
     isCollapse,
-    toggleCollapse
+    toggleCollapse,
+
   }
 })
