@@ -1,7 +1,7 @@
 <template>
   <div>
     <PageHead title="情绪日志" />
-    <TableSearch :formItem="formItem" @search="handleSearch"/>
+    <TableSearch :formItem="formItem" @search="handleSearch" @reset="handleReset" style="margin-bottom: 20px;"/>
     <el-table :data="tableData" width="100%" v-loading="loading">
       <template #empty>
         <div style="text-align: center;">
@@ -16,13 +16,13 @@
           </el-avatar> 
         </template>
       </el-table-column>
-      <el-table-column prop="diaryDate" label="记录日期" width="100"/>
-      <el-table-column prop="diaryDate" label="情绪评分" width="100">
+      <el-table-column prop="diaryDate" label="记录日期" width="100" align="center"/>
+      <el-table-column prop="diaryDate" label="情绪评分" width="220" align="center">
         <template #default="scope">
-          <el-rate v-model="scope.row.moodScore" disabled max="10"></el-rate>
+          <el-rate v-model="scope.row.moodScore" disabled :max="10"></el-rate>
         </template>
       </el-table-column>
-      <el-table-column label="生活指标" width="120">
+      <el-table-column label="生活指标" width="150" align="center">
         <template #default="scope">
           <div>
             <p>
@@ -34,8 +34,8 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="emotionTriggers" label="情绪触发因素" width="150"/>
-      <el-table-column prop="diaryContent" label="日记内容" width="250"/>
+      <el-table-column prop="emotionTriggers" label="情绪触发因素" width="200" align="center"/>
+      <el-table-column prop="diaryContent" label="日记内容" width="250" align="center"/>
       <el-table-column prop="status" label="操作" fixed="right" width="180" header-align="center">
         <template #default="scope">
           <div style="display: flex;align-items: center;justify-content: center;">
@@ -62,7 +62,7 @@ const tableData=ref([])
 //搜索表单
 const formItem = ref([
   {comp:'input',prop:'userId',label:'用户ID',placeholder:'请输入用户ID'},
-  {comp:'select',prop:'moodScreRange',label:'情绪评分',placeholder:'请选择评分范围',options:[
+  {comp:'select',prop:'moodScoreRange',label:'情绪评分',placeholder:'请选择评分范围',options:[
     {label:'低分(1-3)',value:'1-3'},
     {label:'中分(4-6)',value:'4-6'},
     {label:'高分(7-10)',value:'7-10'},
@@ -83,11 +83,12 @@ const getEmotionalLogList=async() => {
   loading.value=true
   try {
     const params={
-      ...pagination,
+      current:pagination.currentPage,
+      size:pagination.size,
       ...searchParams
     }
     const res=await getEmotionalLogPage(params)
-    tableData.value=res.records
+    tableData.value=res.records ?? []
     pagination.total=res.total
     pagination.currentPage=res.current
     pagination.size=res.size
@@ -99,7 +100,11 @@ const getEmotionalLogList=async() => {
 //搜索
 const handleSearch = async(formData) => {
   pagination.currentPage=1
-  Object.assign(searchParams,formData)
+  Object.assign(searchParams,{
+    userId:formData.userId,
+    minMoodScore:formData.moodScoreRange?.split('-')[0],
+    maxMoodScore:formData.moodScoreRange?.split('-')[1],
+  })
   await getEmotionalLogList()
 }
 

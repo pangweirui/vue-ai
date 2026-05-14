@@ -28,6 +28,7 @@ import NavBar from '@/components/NavBar.vue'
       height: 74px!important;
     }
     .content-container{
+      position: relative;
       padding: 20px;
       background-color: #fff;
       min-height: calc(100vh - 74px);
