@@ -83,3 +83,13 @@ export function getConsulationsPage(params:any) {
 export function getSessionDetail(sessionId:string | number) {
   return request.get<unknown, PageResult>(`/psychological-chat/sessions/${sessionId}/messages`)
 }
+
+//获取情绪日志列表
+export function getEmotionalLogPage(params:any) {
+  return request.get<unknown, PageResult>('/emotion-diary/admin/page',{params})
+}
+
+//数据分析
+export function getAnalyticsOverview(){
+  return request.get<unknown, any>('/data-analytics/overview')
+}

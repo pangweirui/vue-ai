@@ -83,7 +83,9 @@ const robotIcon = new URL('@/assets/images/robot.png', import.meta.url).href
       font-size: 14px;
       font-weight: normal;
       margin-left: 5px;
+      margin-top: 5px;
       color: #1f2937;
+      text-align: center;
     }
   }
 }
