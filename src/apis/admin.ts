@@ -89,6 +89,11 @@ export function getEmotionalLogPage(params:any) {
   return request.get<unknown, PageResult>('/emotion-diary/admin/page',{params})
 }
 
+//删除情绪日志
+export function deleteEmotionalLog(id:string) {
+  return request.delete(`/emotion-diary/admin/${id}`)
+}
+
 //数据分析
 export function getAnalyticsOverview(){
   return request.get<unknown, any>('/data-analytics/overview')

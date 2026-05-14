@@ -38,21 +38,24 @@
       <el-table-column prop="diaryContent" label="日记内容" width="250" align="center"/>
       <el-table-column prop="status" label="操作" fixed="right" width="180" header-align="center">
         <template #default="scope">
-          <div style="display: flex;align-items: center;justify-content: center;">
-            <el-button text type="primary">详情</el-button>
-            <el-button v-if="scope.row.status===2" text type="danger" >删除</el-button>
+          <div>
+            <el-button text type="primary" @click="handleDetail(scope.row)">详情</el-button>
+            <el-button text type="danger" @click="handleDelete(scope.row)">删除</el-button>
           </div>
         </template>
       </el-table-column>
     </el-table>
+    <EmotionalDialog v-model="dialogVisible" :currentDetail="currentDetail"/>
   </div>
 </template>
 
 <script setup>
 import { ref,reactive,onMounted } from 'vue'
-import { getEmotionalLogPage } from '@/apis/admin'
+import { getEmotionalLogPage,deleteEmotionalLog } from '@/apis/admin'
 import PageHead from '@/components/pageHead.vue'
 import TableSearch from '@/components/TableSearch.vue'
+import EmotionalDialog from '@/components/EmotionalDialog.vue'
+import {ElMessage,ElMessageBox} from 'element-plus'
 
 const loading=ref(true)
 
@@ -107,6 +110,42 @@ const handleSearch = async(formData) => {
   })
   await getEmotionalLogList()
 }
+
+//重置
+const handleReset = async() => {
+  Object.keys(searchParams).forEach((key) => {
+    delete searchParams[key]
+  })
+  await getEmotionalLogList()
+}
+//详情
+const currentDetail=ref({})
+
+const handleDetail = async(record) => {
+  dialogVisible.value=true
+  currentDetail.value=record
+}
+
+//删除
+const handleDelete = async(record) => {
+  const confirm=await ElMessageBox.confirm('确认删除吗？','提示',{
+    confirmButtonText:'确定',
+    cancelButtonText:'取消',
+    type:'warning',
+  })
+  if(!confirm){
+    return
+  }
+  try {
+    await deleteEmotionalLog(record.id)
+    await getEmotionalLogList()
+    ElMessage.success('删除成功')
+  } catch {
+    ElMessage.error('删除失败')
+  }
+}
+
+const dialogVisible=ref(false)
 
 onMounted(async ()=>{
   await getEmotionalLogList()
