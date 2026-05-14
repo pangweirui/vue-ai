@@ -63,10 +63,30 @@ const backendRoutes: RouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path:'/',
+    redirect:'/back/dashboard',
+      meta:{
+      title:'首页',
+      icon:'Home'
+    }
   }
 ]
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [...backendRoutes],
+})
+
+router.beforeEach((to,from, next) => {
+  if(localStorage.getItem('token')){
+    next()
+  }else{
+    if(to.path.startsWith('/back/dashboard')){
+      next('/auth/login')
+    }else{
+      next()
+    }
+  }
 })

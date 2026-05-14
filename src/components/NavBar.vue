@@ -25,7 +25,9 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { logout } from '@/apis/admin'
 import { useAdminStore } from '@/stores/admin'
+import { ElMessageBox ,ElMessage} from 'element-plus'
 
 const adminStore=useAdminStore()
 
@@ -37,7 +39,17 @@ const handleCollapse=()=>{
 
 const handleCommand = (command: string) => {
   if (command === 'logout') {
-    adminStore.logout()
+    ElMessageBox.confirm('确定退出登录吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      await logout()
+      adminStore.logout()
+      ElMessage.success('退出登录成功')
+    }).catch(() => {
+      ElMessage.info('已取消退出登录')
+    })
   }
 }
 

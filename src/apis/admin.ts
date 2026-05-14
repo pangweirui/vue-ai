@@ -98,3 +98,8 @@ export function deleteEmotionalLog(id:string) {
 export function getAnalyticsOverview(){
   return request.get<unknown, any>('/data-analytics/overview')
 }
+
+//退出登录
+export function logout(){
+  return request.post('/user/logout')
+}

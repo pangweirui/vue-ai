@@ -111,11 +111,25 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { getAnalyticsOverview } from '@/apis/admin'
-import * as echarts from 'echarts'
+import { init, use, graphic } from 'echarts/core'
+import { LineChart, BarChart } from 'echarts/charts'
+import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+import type { EChartsOption } from 'echarts'
+import type { EChartsType } from 'echarts/core'
 import users from '@/assets/images/users.png'
 import like from '@/assets/images/like.png'
 import comments from '@/assets/images/comments.png'
 import smile from '@/assets/images/smile.png'
+
+use([
+  LineChart,
+  BarChart,
+  GridComponent,
+  LegendComponent,
+  TooltipComponent,
+  CanvasRenderer
+])
 
 const loading = ref(true)
 
@@ -184,9 +198,9 @@ const aiData = ref<AnalyticsOverview>({
 
 //情绪图表
 const emotionChartRef = ref<HTMLDivElement | null>(null)
-let emotionChart: echarts.EChartsType | null = null
+let emotionChart: EChartsType | null = null
 //咨询会话统计
-let consultationChart: echarts.EChartsType | null = null
+let consultationChart: EChartsType | null = null
 const consultationChartRef = ref<HTMLDivElement | null>(null)
 
 //初始化情绪图表
@@ -195,12 +209,13 @@ const initEmotionChart = () => {
   if(emotionChart){
     emotionChart.dispose()
   }
-  emotionChart = echarts.init(emotionChartRef.value)
+  const chart = init(emotionChartRef.value)
+  emotionChart = chart
   const emotionTrend  =  aiData.value.emotionTrend
   const dates = emotionTrend.map(item => item.date)
   const moodScores = emotionTrend.map(item => item.avgMoodScore)
   const recordCounts = emotionTrend.map(item => item.recordCount)
-  const options: echarts.EChartsOption = {
+  const options: EChartsOption = {
     tooltip: {
       trigger: 'axis',
       backgroundColor: 'rgba(255, 255, 255, 0.96)',
@@ -327,7 +342,7 @@ const initEmotionChart = () => {
         },
         areaStyle: {
           opacity: 0.18,
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(99, 102, 241, 0.42)' },
             { offset: 1, color: 'rgba(99, 102, 241, 0.02)' }
           ])
@@ -341,7 +356,7 @@ const initEmotionChart = () => {
         barWidth: 14,
         itemStyle: {
           borderRadius: [8, 8, 0, 0],
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: '#f59e0b' },
             { offset: 1, color: 'rgba(245, 158, 11, 0.18)' }
           ])
@@ -354,7 +369,7 @@ const initEmotionChart = () => {
       }
     ]
   }
-  emotionChart.setOption(options)
+  chart.setOption(options)
 }
 
 //初始化咨询图表
@@ -363,13 +378,14 @@ const initConsultationChart = () => {
   if(consultationChart){
     consultationChart.dispose()
   }
-  consultationChart = echarts.init(consultationChartRef.value)
+  const chart = init(consultationChartRef.value)
+  consultationChart = chart
 
   const dailyTrend = aiData.value.consultationStats.dailyTrend
   const dates = dailyTrend.map(item => item.date)
   const sessionCounts = dailyTrend.map(item => item.sessionCount)
   const userCounts = dailyTrend.map(item => item.userCount)
-  const options: echarts.EChartsOption = {
+  const options: EChartsOption = {
     tooltip: {
       trigger: 'axis',
       backgroundColor: 'rgba(255, 255, 255, 0.96)',
@@ -481,7 +497,7 @@ const initConsultationChart = () => {
         z: 2,
         itemStyle: {
           borderRadius: [8, 8, 3, 3],
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: '#2dd4bf' },
             { offset: 1, color: 'rgba(20, 184, 166, 0.18)' }
           ])
@@ -516,7 +532,7 @@ const initConsultationChart = () => {
         },
         areaStyle: {
           opacity: 0.12,
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(37, 99, 235, 0.34)' },
             { offset: 1, color: 'rgba(37, 99, 235, 0.01)' }
           ])
@@ -524,26 +540,27 @@ const initConsultationChart = () => {
       }
     ]
   }
-  consultationChart.setOption(options)
+  chart.setOption(options)
 }
 
 //用户活跃度趋势分析
 const userActivityChartRef = ref<HTMLDivElement | null>(null)
-let userActivityChart: echarts.EChartsType | null = null
+let userActivityChart: EChartsType | null = null
 //初始化用户活跃度趋势分析图表
 const initUserActivityChart = () => {
   if(!userActivityChartRef.value) return
   if(userActivityChart){
     userActivityChart.dispose()
   }
-  userActivityChart = echarts.init(userActivityChartRef.value)
+  const chart = init(userActivityChartRef.value)
+  userActivityChart = chart
   const userActivityData = aiData.value.userActivity
   const dates = userActivityData.map(item => item.date)
   const activeUsers = userActivityData.map(item => item.activeUsers)
   const dailyUsers = userActivityData.map(item => item.dailyUsers)
   const consultationUsers = userActivityData.map(item => item.consultationUsers)
   const newUsers = userActivityData.map(item => item.newUsers)
-  const options: echarts.EChartsOption = {
+  const options: EChartsOption = {
     color: ['#0f766e', '#3b82f6', '#8b5cf6', '#f59e0b'],
     tooltip: {
       trigger: 'axis',
@@ -651,7 +668,7 @@ const initUserActivityChart = () => {
         },
         areaStyle: {
           opacity: 0.16,
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(15, 118, 110, 0.34)' },
             { offset: 1, color: 'rgba(15, 118, 110, 0.01)' }
           ])
@@ -666,7 +683,7 @@ const initUserActivityChart = () => {
         z: 2,
         itemStyle: {
           borderRadius: [7, 7, 2, 2],
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: '#60a5fa' },
             { offset: 1, color: 'rgba(59, 130, 246, 0.16)' }
           ])
@@ -686,7 +703,7 @@ const initUserActivityChart = () => {
         z: 2,
         itemStyle: {
           borderRadius: [7, 7, 2, 2],
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: '#a78bfa' },
             { offset: 1, color: 'rgba(139, 92, 246, 0.16)' }
           ])
@@ -719,7 +736,7 @@ const initUserActivityChart = () => {
       }
     ]
   }
-  userActivityChart.setOption(options)
+  chart.setOption(options)
 }
 
 const resizeCharts = () => {
