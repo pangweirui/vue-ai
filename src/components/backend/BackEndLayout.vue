@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import SideBar from '@/components/SideBar.vue'
-import NavBar from '@/components/NavBar.vue'
+import SideBar from '@/components/backend/SideBar.vue'
+import NavBar from '@/components/backend/NavBar.vue'
 </script>
 
 <style lang="scss" scoped>

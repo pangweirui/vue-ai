@@ -69,8 +69,8 @@
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { VueEternalLoading } from '@ts-pro/vue-eternal-loading'
 import {getConsulationsPage,getSessionDetail} from '@/apis/admin'
-import PageHead from '@/components/pageHead.vue'
-import ConsulationDialog from '@/components/ConsulationDialog.vue'
+import PageHead from '@/components/backend/pageHead.vue'
+import ConsulationDialog from '@/components/backend/ConsulationDialog.vue'
 
 const tableData = ref([])
 const hasLoadedData = ref(false)

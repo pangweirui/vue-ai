@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import BackEndLayout from '@/components/BackEndLayout.vue'
-import AuthLayout from '@/components/AuthLayout.vue'
-import FrontendLayout from '@/components/FrontendLayout.vue'
+import BackEndLayout from '@/components/backend/BackEndLayout.vue'
+import AuthLayout from '@/components/backend/AuthLayout.vue'
+import FrontendLayout from '@/components/frontend/FrontendLayout.vue'
 
 const backendRoutes: RouteRecordRaw[] = [
   {
@@ -77,11 +77,11 @@ const backendRoutes: RouteRecordRaw[] = [
 
 const frontendRoutes: RouteRecordRaw[] = [
   {
-    path:'',
+    path:'/front',
     component: FrontendLayout,
     children: [
       {
-        path:'',
+        path:'home',
         component: () => import('@/views/frontend/home.vue'),
         meta:{
           title:'首页',
@@ -89,7 +89,7 @@ const frontendRoutes: RouteRecordRaw[] = [
         }
       },
       {
-        path:'/consulation',
+        path:'consulation',
         component: () => import('@/views/frontend/consulation.vue'),
         meta:{
           title:'咨询记录',
@@ -97,7 +97,7 @@ const frontendRoutes: RouteRecordRaw[] = [
         }
       },
       {
-        path:'/knowledge',
+        path:'knowledge',
         component: () => import('@/views/frontend/frontendKnowlege.vue'),
         meta:{
           title:'知识库',
@@ -105,7 +105,7 @@ const frontendRoutes: RouteRecordRaw[] = [
         }
       },
       {
-        path:'/emotion-diary',
+        path:'emotion-diary',
         component: () => import('@/views/frontend/emotionDairy.vue'),
         meta:{
           title:'情绪日志',
@@ -113,6 +113,14 @@ const frontendRoutes: RouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path:'/',
+    redirect:'/front/home',
+    meta:{
+      title:'首页',
+      icon:'Home'
+    }
   }
 ]
 export const router = createRouter({
@@ -126,7 +134,7 @@ router.beforeEach((to, _from, next) => {
   }else{
     if(to.path.startsWith('/back/dashboard')){
       next('/auth/login')
-    }else{
+    }else if(to.path.startsWith('/front')){
       next()
     }
   }

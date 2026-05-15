@@ -66,9 +66,9 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue'
 import { categoryList,articlePage,getArticleDetail ,changeArticleStatus,deleteArticle} from '@/apis/admin'
-import PageHead from '@/components/pageHead.vue'
-import TableSearch from '@/components/TableSearch.vue'
-import ArticleDialog from '@/components/ArticleDialog.vue'
+import PageHead from '@/components/backend/pageHead.vue'
+import TableSearch from '@/components/backend/TableSearch.vue'
+import ArticleDialog from '@/components/backend/ArticleDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 搜索表单

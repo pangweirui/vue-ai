@@ -11,10 +11,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ArticleDialog: typeof import('./src/components/ArticleDialog.vue')['default']
-    AuthLayout: typeof import('./src/components/AuthLayout.vue')['default']
-    BackEndLayout: typeof import('./src/components/BackEndLayout.vue')['default']
-    ConsulationDialog: typeof import('./src/components/ConsulationDialog.vue')['default']
+    ArticleDialog: typeof import('./src/components/backend/ArticleDialog.vue')['default']
+    AuthLayout: typeof import('./src/components/backend/AuthLayout.vue')['default']
+    BackEndLayout: typeof import('./src/components/backend/BackEndLayout.vue')['default']
+    ConsulationDialog: typeof import('./src/components/backend/ConsulationDialog.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -46,15 +46,15 @@ declare module 'vue' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    EmotionalDialog: typeof import('./src/components/EmotionalDialog.vue')['default']
-    FrontendLayout: typeof import('./src/components/FrontendLayout.vue')['default']
-    NavBar: typeof import('./src/components/NavBar.vue')['default']
-    PageHead: typeof import('./src/components/pageHead.vue')['default']
-    RichTextEditor: typeof import('./src/components/RichTextEditor.vue')['default']
+    EmotionalDialog: typeof import('./src/components/backend/EmotionalDialog.vue')['default']
+    FrontendLayout: typeof import('./src/components/frontend/FrontendLayout.vue')['default']
+    NavBar: typeof import('./src/components/backend/NavBar.vue')['default']
+    PageHead: typeof import('./src/components/backend/pageHead.vue')['default']
+    RichTextEditor: typeof import('./src/components/backend/RichTextEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SideBar: typeof import('./src/components/SideBar.vue')['default']
-    TableSearch: typeof import('./src/components/TableSearch.vue')['default']
+    SideBar: typeof import('./src/components/backend/SideBar.vue')['default']
+    TableSearch: typeof import('./src/components/backend/TableSearch.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

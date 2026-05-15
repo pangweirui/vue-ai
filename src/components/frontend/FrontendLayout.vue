@@ -6,10 +6,10 @@
         <h1 class="brand-name">心理健康AI助手</h1>
       </div>
       <div class="nav-section">
-          <router-link to="" active-class="active" class="nav-link" >首页</router-link>
-          <router-link to="/consulation" active-class="active" class="nav-link" v-if="isLoggedIn" >AI咨询</router-link>
-          <router-link to="/emotion-diary" active-class="active" class="nav-link" v-if="isLoggedIn" >情绪日记</router-link>
-          <router-link to="/knowledge" active-class="active" class="nav-link" >知识库</router-link>
+          <router-link to="/front/home" active-class="active" class="nav-link" >首页</router-link>
+          <router-link to="/front/consulation" active-class="active" class="nav-link" v-if="isLoggedIn" >AI咨询</router-link>
+          <router-link to="/front/emotion-diary" active-class="active" class="nav-link" v-if="isLoggedIn" >情绪日记</router-link>
+          <router-link to="/front/knowledge" active-class="active" class="nav-link" >知识库</router-link>
           <el-button class="logout-btn" v-if="isLoggedIn">退出登录</el-button>
           <template v-else>
             <router-link to="/auth/login" active-class="active" class="nav-link">登录</router-link>

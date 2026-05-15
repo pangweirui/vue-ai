@@ -62,9 +62,9 @@
 <script setup>
 import { ref,reactive,onMounted } from 'vue'
 import { getEmotionalLogPage,deleteEmotionalLog } from '@/apis/admin'
-import PageHead from '@/components/pageHead.vue'
-import TableSearch from '@/components/TableSearch.vue'
-import EmotionalDialog from '@/components/EmotionalDialog.vue'
+import PageHead from '@/components/backend/pageHead.vue'
+import TableSearch from '@/components/backend/TableSearch.vue'
+import EmotionalDialog from '@/components/backend/EmotionalDialog.vue'
 import {ElMessage,ElMessageBox} from 'element-plus'
 
 const loading=ref(true)
