@@ -1,69 +1,64 @@
 <template>
-  <div>
+  <div class="admin-list-page knowledge-page">
     <PageHead #buttons title="知识文章">
-      <el-button type="primary" @click="handleCreate">新增</el-button>
+      <el-button type="primary" @click="handleCreate">新增文章</el-button>
     </PageHead>
     <TableSearch :formItem="formItem" @search="handleSearch" @reset="handleReset" />
-    <el-table v-loading="loading" :data="tableData" style="width: 100%;margin-top: 25px;">
-      <template #empty>
-        <div class="table-empty">
-          <el-empty v-show="!loading" description="暂无知识文章" />
-        </div>
-      </template>
-      <el-table-column prop="title" label="文章标题" fixed="left" width="300" header-align="center">
-        <template #default="scope">
-          <div style="display: flex;align-items: center;">
-            <el-icon><Timer/></el-icon>
-            <span>{{scope.row.title}}</span>
+    <div class="table-panel">
+      <el-table v-loading="loading" :data="tableData" class="admin-table">
+        <template #empty>
+          <div class="table-empty">
+            <el-empty v-show="!loading" description="暂无知识文章" />
           </div>
         </template>
-      </el-table-column>
-      <el-table-column prop="categoryId" label="分类" width="200" header-align="center">
-        <template #default="scope">
-          <div style="display: flex;align-items: center;justify-content: center;">
-            <span>{{categoryMap[scope.row.categoryId]}}</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="authName" label="作者" width="150" header-align="center">
-        <template #default="scope">
-          <div style="display: flex;align-items: center;justify-content: center;">
-            <span>{{scope.row.authorName}}</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="readCount" label="阅读量" width="150" header-align="center">
-        <template #default="scope">
-          <div style="display: flex;align-items: center;justify-content: center;">
-            <span>{{scope.row.readCount}}</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createTime" label="发布时间" width="200" header-align="center">
-        <template #default="scope">
-          <div style="display: flex;align-items: center;justify-content: center;">
-            <span>{{scope.row.updatedAt}}</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="status" label="操作" fixed="right" width="180" header-align="center">
-        <template #default="scope">
-          <div style="display: flex;align-items: center;justify-content: center;">
-            <el-button text type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button v-if="scope.row.status===0||scope.row.status===2" @click="handlePublish(scope.row)" text type="primary">发布</el-button>
-            <el-button v-if="scope.row.status===1" @click="handleDown(scope.row)" text type="warning" >下线</el-button>
-            <el-button v-if="scope.row.status===2" @click="handleDelete(scope.row)" text type="danger" >删除</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      style="margin-top: 25px;position: absolute;right: 0;"
-      layout=" prev, pager, next"
-      :total="pagination.total"
-      :page-size="pagination.size"
-      @change="handleChange"
-    />
+        <el-table-column prop="title" label="文章标题" fixed="left" min-width="300" header-align="center">
+          <template #default="scope">
+            <div class="title-cell">
+              <el-icon><Timer /></el-icon>
+              <span>{{ scope.row.title }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="categoryId" label="分类" min-width="160" align="center">
+          <template #default="scope">
+            <el-tag round effect="light">{{ categoryMap[scope.row.categoryId] || '未分类' }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="authName" label="作者" min-width="140" align="center">
+          <template #default="scope">
+            <span class="muted-text">{{ scope.row.authorName || '-' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="readCount" label="阅读量" min-width="120" align="center">
+          <template #default="scope">
+            <span class="metric-text">{{ scope.row.readCount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="发布时间" min-width="180" align="center">
+          <template #default="scope">
+            <span class="muted-text">{{ scope.row.updatedAt }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="操作" fixed="right" width="190" align="center">
+          <template #default="scope">
+            <div class="table-actions">
+              <el-button text type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button v-if="scope.row.status===0||scope.row.status===2" @click="handlePublish(scope.row)" text type="primary">发布</el-button>
+              <el-button v-if="scope.row.status===1" @click="handleDown(scope.row)" text type="warning">下线</el-button>
+              <el-button v-if="scope.row.status===2" @click="handleDelete(scope.row)" text type="danger">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        class="page-pagination"
+        layout="total, prev, pager, next"
+        :total="pagination.total"
+        :page-size="pagination.size"
+        :current-page="pagination.currentPage"
+        @change="handleChange"
+      />
+    </div>
     <ArticleDialog v-model="dialogVisible" :categories="categories" :tagArray="commonTags" :currentArticle="currentArticle" />
   </div>
 </template>
@@ -179,7 +174,6 @@ const handleEdit=(async (row:any)=>{
   currentArticle.value=data
   dialogVisible.value=true
   await getList()
-  ElMessage.success('编辑成功')
 })
 // 发布文章
 const handlePublish=(async (row:any)=>{
@@ -256,5 +250,85 @@ onMounted(async ()=>{
 </script>
 
 <style lang="scss" scoped>
+.admin-list-page {
+  min-height: 100%;
+}
 
+.table-panel {
+  overflow: hidden;
+  border: 1px solid #e5edf7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.045);
+}
+
+.admin-table {
+  width: 100%;
+
+  :deep(.el-table__header th.el-table__cell) {
+    background: #fbfdff;
+    color: #475569;
+    font-weight: 700;
+  }
+
+  :deep(.el-table__body td.el-table__cell) {
+    padding: 14px 0;
+  }
+
+  :deep(.el-table__row) {
+    transition: background-color 0.18s ease;
+  }
+
+  :deep(.el-table__row:hover > td.el-table__cell) {
+    background: #f8fbff;
+  }
+}
+
+.title-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: #0f172a;
+  font-weight: 600;
+
+  .el-icon {
+    flex: 0 0 auto;
+    color: #6366f1;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.metric-text {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.muted-text {
+  color: #64748b;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.page-pagination {
+  justify-content: flex-end;
+  padding: 18px 20px;
+}
+
+.table-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
 </style>

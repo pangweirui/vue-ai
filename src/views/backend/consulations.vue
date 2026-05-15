@@ -1,16 +1,15 @@
 <template>
-  <div class="consultation-page">
+  <div class="consultation-page admin-list-page">
     <PageHead title="咨询记录" />
 
     <div
       ref="listRef"
-      class="consultation-list"
+      class="consultation-list table-panel"
     >
       <el-table
         v-loading="loading && tableData.length === 0"
         :data="tableData"
         class="consultation-table"
-        style="width: 100%"
         @row-click="handleDetail"
       >
         <template #empty>
@@ -18,12 +17,17 @@
             <el-empty v-show="!loading" description="暂无咨询记录" />
           </div>
         </template>
-        <el-table-column label="会话ID" width="150" fixed="left" align="center">
+        <el-table-column label="用户" width="180" fixed="left" align="center">
           <template #default="scope">
-            <el-avatar>{{ scope.row.userNickname || scope.row.nickname }}</el-avatar>
+            <div class="user-cell">
+              <el-avatar class="user-avatar">
+                {{ getAvatarText(scope.row) }}
+              </el-avatar>
+              <span>{{ getNickname(scope.row) }}</span>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column label="情绪日志" header-align="center">
+        <el-table-column label="会话内容" header-align="center" min-width="260">
           <template #default="scope">
             <div class="session-title">{{ scope.row.sessionTitle }}</div>
             <div class="session-preview">{{ scope.row.lastMessageContent }}</div>
@@ -81,6 +85,14 @@ const isInitial = ref(true)
 const showNoMore = computed(() => {
   return hasMore.value || pageNo.value > 1
 })
+
+const getNickname = (row) => {
+  return row.userNickname || row.nickname || '匿名用户'
+}
+
+const getAvatarText = (row) => {
+  return String(getNickname(row)).slice(0, 1)
+}
 
 // 获取咨询记录列表
 const getConsulationsList=async(page=1)=>{
@@ -174,6 +186,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.admin-list-page {
+  min-height: 100%;
+}
+
 .consultation-page {
   height: calc(100vh - 154px);
   display: flex;
@@ -186,20 +202,71 @@ onMounted(() => {
   overflow-anchor: none;
 }
 
+.table-panel {
+  border: 1px solid #e5edf7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.045);
+}
+
 .consultation-table {
+  width: 100%;
+
+  :deep(.el-table__header th.el-table__cell) {
+    background: #fbfdff;
+    color: #475569;
+    font-weight: 700;
+  }
+
+  :deep(.el-table__body td.el-table__cell) {
+    padding: 14px 0;
+  }
+
   :deep(.el-table__row) {
     cursor: pointer;
+    transition: background-color 0.18s ease;
+  }
+
+  :deep(.el-table__row:hover > td.el-table__cell) {
+    background: #f8fbff;
   }
 }
 
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: #0f172a;
+  font-weight: 600;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.user-avatar {
+  flex: 0 0 auto;
+  background: linear-gradient(135deg, #6366f1 0%, #14b8a6 100%);
+  color: #ffffff;
+  font-weight: 700;
+}
+
 .session-title {
-  font-weight: 500;
+  color: #0f172a;
+  font-weight: 700;
 }
 
 .session-preview {
-  margin-top: 4px;
-  color: #909399;
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 6px;
+  color: #64748b;
   font-size: 13px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .load-status {
@@ -207,12 +274,13 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #909399;
+  color: #94a3b8;
   font-size: 13px;
 }
 .table-empty{
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 220px;
 }
 </style>

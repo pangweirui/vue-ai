@@ -227,7 +227,11 @@ const handleSubmit= () => {
       }else{
         await createArticle(submitData)
       }
-      ElMessage.success('新增成功')
+      if(isEdit.value){
+        ElMessage.success('编辑成功')
+      }else{
+        ElMessage.success('新增成功')
+      }
       dialogVisible.value=false
       loading.value=false
     }

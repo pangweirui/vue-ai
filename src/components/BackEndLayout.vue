@@ -24,19 +24,30 @@ import NavBar from '@/components/NavBar.vue'
   height: 100vh;
   .main-container{
     height: 100%;
+    background: #ffffff;
     .el-header{
       height: 74px!important;
     }
     .content-container{
       position: relative;
-      padding: 20px;
-      background-color: #fff;
+      padding: 24px;
+      background: #ffffff;
       min-height: calc(100vh - 74px);
-      
+      overflow: auto;
     }
   }
   .side-bar{
     height: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .backend-layout {
+    .main-container {
+      .content-container {
+        padding: 16px;
+      }
+    }
   }
 }
 </style>

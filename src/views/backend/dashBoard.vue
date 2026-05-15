@@ -1,25 +1,25 @@
 <template>
   <div class="dashboard-container">
-    <el-row :gutter="20">
-      <el-col :span="6">
-        <el-card v-if="aiData.systemOverview">
+    <el-row :gutter="20" class="overview-row">
+      <el-col :xs="24" :sm="12" :md="12" :lg="6">
+        <el-card v-if="aiData.systemOverview" class="overview-card">
           <div class="card-content">
             <div class="avatar users">
-              <el-image :src="users" alt="用户头像"style="width: 40px; height: 40px;" />
+              <el-image :src="users" alt="用户头像" style="width: 40px; height: 40px;" />
             </div>
             <div class="info">
-              <p class="title">总用户数{{ aiData.systemOverview.totalUsers }}</p>
-              <p class="number"></p>
+              <p class="title">总用户数</p>
+              <p class="number">{{ aiData.systemOverview.totalUsers }}</p>
               <p class="subtitle-title">活跃用户：{{ aiData.systemOverview.activeUsers }}</p>
             </div>
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
-        <el-card v-if="aiData.systemOverview">
+      <el-col :xs="24" :sm="12" :md="12" :lg="6">
+        <el-card v-if="aiData.systemOverview" class="overview-card">
           <div class="card-content">
             <div class="avatar like">
-              <el-image :src="like" alt="用户头像"style="width: 40px; height: 40px;" />
+              <el-image :src="like" alt="用户头像" style="width: 40px; height: 40px;" />
             </div>
             <div class="info">
               <p class="title">情绪日志</p>
@@ -29,11 +29,11 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
-        <el-card v-if="aiData.systemOverview">
+      <el-col :xs="24" :sm="12" :md="12" :lg="6">
+        <el-card v-if="aiData.systemOverview" class="overview-card">
           <div class="card-content">
-            <div class="avatar like">
-              <el-image :src="comments" alt="用户头像"style="width: 40px; height: 40px;" />
+            <div class="avatar comments">
+              <el-image :src="comments" alt="用户头像" style="width: 40px; height: 40px;" />
             </div>
             <div class="info">
               <p class="title">咨询会话</p>
@@ -43,11 +43,11 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
-        <el-card v-if="aiData.systemOverview">
+      <el-col :xs="24" :sm="12" :md="12" :lg="6">
+        <el-card v-if="aiData.systemOverview" class="overview-card">
           <div class="card-content">
             <div class="avatar smile">
-              <el-image :src="smile" alt="用户头像"style="width: 40px; height: 40px;" />
+              <el-image :src="smile" alt="用户头像" style="width: 40px; height: 40px;" />
             </div>
             <div class="info">
               <p class="title">平均情绪</p>
@@ -779,9 +779,27 @@ onBeforeUnmount(() => {
 </script>
 <style lang="scss" scoped>
 .dashboard-container {
+    .overview-row {
+      row-gap: 20px;
+    }
+
+    .overview-card {
+      height: 100%;
+      border: 1px solid #e5edf7;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.045);
+
+      :deep(.el-card__body) {
+        height: 100%;
+        padding: 20px;
+      }
+    }
+
     .card-content {
       display: flex;
       align-items: center;
+      height: 100%;
       .avatar {
         margin-right: 12px;
         width: 60px;
@@ -804,20 +822,22 @@ onBeforeUnmount(() => {
         }
       }
       .info {
+        min-width: 0;
         .title {
           font-size: 14px;
-          color: #7f8c8d;
+          color: #64748b;
           margin-bottom: 4px;
         }
-        .value {
+        .number {
           font-size: 24px;
           font-weight: 700;
-          color: #2c3e50;
-          margin-bottom: 4px
+          color: #0f172a;
+          line-height: 1.2;
+          margin-bottom: 4px;
         }
         .subtitle-title {
           font-size: 12px;
-          color: #95a5a6;
+          color: #94a3b8;
         }
       }
     }
@@ -826,9 +846,10 @@ onBeforeUnmount(() => {
     }
     .chart-card {
       width: 100%;
-      border: 0;
+      border: 1px solid #e5edf7;
       border-radius: 8px;
-      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.045);
 
       :deep(.el-card__header) {
         padding: 16px 20px 0;
@@ -842,7 +863,7 @@ onBeforeUnmount(() => {
       .card-header {
         font-size: 16px;
         font-weight: 700;
-        color: #1f2937;
+        color: #0f172a;
       }
     }
     .chart-content {
@@ -886,9 +907,9 @@ onBeforeUnmount(() => {
           position: relative;
           overflow: hidden;
           padding: 12px 14px;
-          border: 1px solid rgba(226, 232, 240, 0.9);
+          border: 1px solid #e5edf7;
           border-radius: 8px;
-          background: rgba(255, 255, 255, 0.78);
+          background: #fbfdff;
 
           &::before {
             content: '';
@@ -925,4 +946,21 @@ onBeforeUnmount(() => {
       }
     }
   }
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    .chart-content {
+      height: 320px;
+      padding: 16px 12px;
+
+      &.user-activity-content {
+        height: 360px;
+      }
+
+      .consultation-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
 </style>

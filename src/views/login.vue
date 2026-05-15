@@ -65,6 +65,7 @@ const submitForm = async (form) => {
           localStorage.setItem('username', JSON.stringify(data.username))
           if(data.userInfo.userType===2){
             router.push('/back/dashboard')
+            ElMessage.success('登录成功')
           }else{
           }
         }
@@ -72,39 +73,127 @@ const submitForm = async (form) => {
     }
   })
 }
+
+document.addEventListener('keydown', (e) => {
+  if(e.key==='Enter'){
+    submitForm(ruleFormRef.value)
+  }
+})
 </script>
 
 <style lang="scss" scoped>
 .container {
-  width: 384px;
+  width: min(420px, 100%);
+  padding: 38px;
+  border: 1px solid #e5edf7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
   .title{
     .backHome{
-      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 12px;
+      margin-bottom: 30px;
+      border: 1px solid #dbe6f4;
+      border-radius: 8px;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 600;
+      background: #fbfdff;
+      cursor: pointer;
+      transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+
+      &:hover {
+        color: #2563eb;
+        border-color: #bfdbfe;
+        background: #f8fbff;
+      }
     }
     .text{
-      text-align: center;      
+      text-align: left;      
       h2{
-        font-size: 36px;
         margin-bottom: 10px;
+        color: #0f172a;
+        font-size: 34px;
+        line-height: 1.2;
+        letter-spacing: 0;
       }
       p{
-        font-size: 18px;
-        color: #666;
+        color: #64748b;
+        font-size: 16px;
+        line-height: 1.7;
       }
     }
   }
   .form-container{
     width: 100%;
-    margin-top: 20px;
+    margin-top: 30px;
+
+    :deep(.el-form-item) {
+      margin-bottom: 20px;
+    }
+
+    :deep(.el-form-item__label) {
+      color: #334155;
+      font-weight: 700;
+    }
+
+    :deep(.el-input__wrapper) {
+      min-height: 46px;
+      border-radius: 8px;
+      background: #fbfdff;
+      box-shadow: 0 0 0 1px #dbe6f4 inset;
+      transition: box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    :deep(.el-input__wrapper:hover) {
+      box-shadow: 0 0 0 1px #bfdbfe inset;
+    }
+
+    :deep(.el-input__wrapper.is-focus) {
+      background: #ffffff;
+      box-shadow: 0 0 0 1px #3b82f6 inset, 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+
     .footer{
       width: 100%;
       text-align: center;
       .btn{
         width: 100%;
-        margin-top: 40px;
+        height: 46px;
+        margin-top: 22px;
         margin-bottom: 20px;
+        border: 0;
+        border-radius: 8px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2563eb 0%, #14b8a6 100%);
+        box-shadow: 0 14px 26px rgba(37, 99, 235, 0.2);
       }
 
+      p {
+        color: #64748b;
+        font-size: 14px;
+      }
+
+      a {
+        color: #2563eb;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    padding: 30px 22px;
+    border: 0;
+    box-shadow: none;
+
+    .title .text h2 {
+      font-size: 28px;
     }
   }
 }

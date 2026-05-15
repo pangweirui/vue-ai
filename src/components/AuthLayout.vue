@@ -26,29 +26,51 @@ import robot from '@/assets/images/robot-fill.png'
 <style lang="scss" scoped>
 .auth-layout {
     display: flex;
+    min-height: 100vh;
+    background: #ffffff;
     .left-section {
+        position: relative;
+        overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
         flex: 1;
-        background: linear-gradient(90deg, rgb(74, 156, 140) 0%, rgb(61, 138, 122) 100%) rgba(74, 156, 140, 0.95);
+        background: linear-gradient(135deg, #2563eb 0%, #14b8a6 100%);
         height: 100vh;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+              linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+              linear-gradient(180deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 44px 44px;
+            opacity: 0.34;
+        }
+
         .content {
+            position: relative;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            width: min(520px, 82%);
+            text-align: center;
             .title {
-                margin-bottom: 20px;
-                font-size: 40px;
+                margin-bottom: 18px;
+                font-size: 42px;
                 font-weight: bold;
                 color: #fff;
+                line-height: 1.2;
             }
             .text {
-                margin-bottom: 20px;
-                width: 460px;
-                font-size: 20px;
-                color: #fff;
+                margin-bottom: 28px;
+                width: 100%;
+                font-size: 18px;
+                line-height: 1.8;
+                color: rgba(255, 255, 255, 0.86);
                 text-align: center;
             }
             .robot {
@@ -57,10 +79,11 @@ import robot from '@/assets/images/robot-fill.png'
                 align-items: center;
                 width: 160px;
                 height: 160px;
-                border-radius: 50%;
-                border: 2px solid rgba(255, 255, 255, 0.2);
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1),inset 0 1px 0 rgba(255, 255, 255, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.24);
+                background: rgba(255, 255, 255, 0.14);
+                box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16),inset 0 1px 0 rgba(255, 255, 255, 0.28);
+                backdrop-filter: blur(10px);
             }
         }
     }
@@ -70,7 +93,21 @@ import robot from '@/assets/images/robot-fill.png'
         align-items: center;
         flex: 1;
         height: 100vh;
-        background-color: #fff;
+        padding: 32px;
+        background-color: #ffffff;
+    }
+}
+
+@media (max-width: 960px) {
+    .auth-layout {
+        .left-section {
+            display: none;
+        }
+
+        .right-section {
+            min-height: 100vh;
+            height: auto;
+        }
     }
 }
 </style>

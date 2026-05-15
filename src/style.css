@@ -29,7 +29,9 @@ li {
 
 body {
   height: 100vh;
-  background-color: #f1f4f6;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: "Inter", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
 }
 
 #app {
@@ -49,4 +51,8 @@ body {
   .el-pagination {
     justify-content: end;
   }
+}
+
+.el-button {
+  border-radius: 8px;
 }

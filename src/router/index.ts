@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import BackEndLayout from '@/components/BackEndLayout.vue'
 import AuthLayout from '@/components/AuthLayout.vue'
+import FrontendLayout from '@/components/FrontendLayout.vue'
 
 const backendRoutes: RouteRecordRaw[] = [
   {
@@ -10,7 +11,7 @@ const backendRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashBoard.vue'),
+        component: () => import('@/views/backend/dashBoard.vue'),
         meta:{
           title:'数据分析',
           icon:'PieChart'
@@ -18,7 +19,7 @@ const backendRoutes: RouteRecordRaw[] = [
       },
       {
         path:'knowledge',
-        component: () => import('@/views/knowledge.vue'),
+        component: () => import('@/views/backend/knowledge.vue'),
         meta:{
           title:'知识文章',
           icon:'ChatLineSquare'
@@ -26,7 +27,7 @@ const backendRoutes: RouteRecordRaw[] = [
       },
       {
         path:'consulations',
-        component: () => import('@/views/consulations.vue'),
+        component: () => import('@/views/backend/consulations.vue'),
         meta:{
           title:'咨询记录',
           icon:'Message'
@@ -34,7 +35,7 @@ const backendRoutes: RouteRecordRaw[] = [
       },
       {
         path:'emotional',
-        component: () => import('@/views/emotional.vue'),
+        component: () => import('@/views/backend/emotional.vue'),
         meta:{
           title:'情绪日志',
           icon:'User'
@@ -74,12 +75,52 @@ const backendRoutes: RouteRecordRaw[] = [
   }
 ]
 
+const frontendRoutes: RouteRecordRaw[] = [
+  {
+    path:'',
+    component: FrontendLayout,
+    children: [
+      {
+        path:'',
+        component: () => import('@/views/frontend/home.vue'),
+        meta:{
+          title:'首页',
+          icon:'Home'
+        }
+      },
+      {
+        path:'/consulation',
+        component: () => import('@/views/frontend/consulation.vue'),
+        meta:{
+          title:'咨询记录',
+          icon:'Message'
+        }
+      },
+      {
+        path:'/knowledge',
+        component: () => import('@/views/frontend/frontendKnowlege.vue'),
+        meta:{
+          title:'知识库',
+          icon:'ChatLineSquare'
+        }
+      },
+      {
+        path:'/emotion-diary',
+        component: () => import('@/views/frontend/emotionDairy.vue'),
+        meta:{
+          title:'情绪日志',
+          icon:'User'
+        }
+      }
+    ]
+  }
+]
 export const router = createRouter({
   history: createWebHistory(),
-  routes: [...backendRoutes],
+  routes: [...backendRoutes,...frontendRoutes],
 })
 
-router.beforeEach((to,from, next) => {
+router.beforeEach((to, _from, next) => {
   if(localStorage.getItem('token')){
     next()
   }else{

@@ -4,7 +4,7 @@ import {router} from '@/router'
 
 const request = axios.create({
   baseURL: '/api',
-  timeout: 5000
+  timeout: 15000
 })
 
 request.interceptors.request.use(
@@ -37,7 +37,10 @@ request.interceptors.response.use(
     }
   },
   error => {
-    const message = error.response?.data?.msg || error.response?.data?.message || error.message
+    const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout')
+    const message = isTimeout
+      ? '请求超时，请稍后重试'
+      : error.response?.data?.msg || error.response?.data?.message || error.message
     if (message) {
       ElMessage.error(message)
     }
