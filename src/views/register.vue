@@ -23,8 +23,8 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="formData.email" placeholder="请输入邮箱"></el-input>
         </el-form-item> 
-        <el-form-item label="昵称" prop="nikname">
-          <el-input v-model="formData.nikname" placeholder="请输入昵称"></el-input>
+        <el-form-item label="昵称" prop="nickname">
+          <el-input v-model="formData.nickname" placeholder="请输入昵称"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="formData.phone" placeholder="请输入手机号"></el-input>
@@ -47,7 +47,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import {router} from '@/router'
-import { register } from '@/apis/admin'
+import { register } from '@/apis/frontend'
 import { ElMessage } from 'element-plus'
 
 const ruleFormRef = ref(null)
@@ -55,11 +55,11 @@ const ruleFormRef = ref(null)
 const formData = reactive({
   username: '',
   email:'',
-  nikname:'',
+  nickname:'',
   phone:'',
   password: '',
   confirmPassword: '',
-  gender:0,
+  gender:1,
   userType:1,
 })
 
@@ -90,11 +90,22 @@ const submitForm = async (form) => {
     if(valid){
       const registerData = {
         username: formData.username,
-        password: formData.password
+        email:formData.email,
+        nickname:formData.nickname,
+        phone:formData.phone,
+        gender:2,
+        userType:1,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
       }
-      register(registerData).then(() => {
-        ElMessage.success('注册成功，请登录')
-        router.push('/auth/login')
+      register(registerData).then((data) => {
+        if(data.code ==="BUSINESS_ERROR"){
+          ElMessage.error('注册失败，请检查用户名、邮箱、昵称、手机号是否重复')
+        } 
+        else{
+          ElMessage.success('注册成功，请登录')
+          router.push('/auth/login')
+        }
       })
     }
   })

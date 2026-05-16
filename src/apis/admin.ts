@@ -17,10 +17,6 @@ export const login = (data: any) => {
   return request.post('/user/login', data)
 }
 
-export const register = (data: any) => {
-  return request.post('/user/register', data)
-}
-
 //分类
 export const categoryList = () => {
   return request.get<unknown, Category[]>('/knowledge/category/tree')

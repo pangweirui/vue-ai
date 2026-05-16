@@ -61,15 +61,20 @@ const submitForm = async (form) => {
           ElMessage.error(data.msg)
           return
         }else{
-          localStorage.setItem('token', data.token)
-          localStorage.setItem('username', JSON.stringify(data.username))
-          if(data.userInfo.userType===2){
-            router.push('/back/dashboard')
-            ElMessage.success('登录成功')
-          }else{
-            router.push('/front/home')
-            ElMessage.success('登录成功')
+          const userInfo = data.userInfo || data.user || {
+            id: data.id,
+            username: data.username,
+            userType: data.userType,
           }
+          const username = data.username || userInfo.username || formData.username
+          const targetPath = Number(userInfo.userType) === 2 ? '/back/dashboard' : '/front/home'
+
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('userInfo', JSON.stringify(userInfo))
+          localStorage.setItem('username', username)
+
+          router.push(targetPath)
+          ElMessage.success('登录成功')
         }
       })
     }

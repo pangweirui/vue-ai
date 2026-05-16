@@ -10,7 +10,18 @@
           <router-link to="/front/consulation" active-class="active" class="nav-link" v-if="isLoggedIn" >AI咨询</router-link>
           <router-link to="/front/emotion-diary" active-class="active" class="nav-link" v-if="isLoggedIn" >情绪日记</router-link>
           <router-link to="/front/knowledge" active-class="active" class="nav-link" >知识库</router-link>
-          <el-button class="logout-btn" v-if="isLoggedIn">退出登录</el-button>
+          <el-dropdown class="logout-btn" v-if="isLoggedIn" @command="handleCommand">
+            <el-button class="user-btn">
+              <el-icon> <User /></el-icon>
+              <p class="user-name">用户</p>
+              <el-icon> <ArrowDown /></el-icon>
+            </el-button>
+            <template #dropdown>
+            <el-dropdown-menu >
+              <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
           <template v-else>
             <router-link to="/auth/login" active-class="active" class="nav-link">登录</router-link>
             <router-link to="/auth/register" active-class="active" class="nav-link">
@@ -34,9 +45,29 @@
 
 <script setup>
 import { computed } from 'vue'
+import { logout } from '@/apis/admin'
+import { useAdminStore } from '@/stores/admin'
+import { ElMessage } from 'element-plus'
 import logo from '@/assets/images/xinqing-logo.svg'
 
 const isLoggedIn=computed(()=>localStorage.getItem('token')!==null)
+
+const store=useAdminStore()
+const handleCommand=async(command)=>{
+  if (command === 'logout') {
+    ElMessageBox.confirm('确定退出登录吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      await logout()
+      store.logout()
+      ElMessage.success('退出登录成功')
+    }).catch(() => {
+      ElMessage.info('已取消退出登录')
+    })
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -138,11 +138,44 @@ export const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   const hasToken = Boolean(localStorage.getItem('token'))
+  const isBackRoute = to.path.startsWith('/back')
 
-  if(to.meta.requiresAuth && !hasToken){
-    next('/auth/login')
+  if(!hasToken){
+    if(isBackRoute){
+      next('/auth/login')
+      return
+    }
+    next()
     return
   }
 
-  next()
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+  const userType = Number(userInfo.userType)
+
+  if(userType === 2){
+    if(isBackRoute){
+      next()
+    }else{
+      next('/back/dashboard')
+    }
+    return
+  }
+
+  if(userType === 1){
+    if(isBackRoute){
+      next('/front/home')
+    }else{
+      next()
+    }
+    return
+  }
+
+  localStorage.removeItem('token')
+  localStorage.removeItem('userInfo')
+  localStorage.removeItem('username')
+  if(to.path === '/auth/login'){
+    next()
+  }else{
+    next('/auth/login')
+  }
 })
