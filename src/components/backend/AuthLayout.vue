@@ -2,12 +2,12 @@
   <div class="auth-layout">
     <div class="left-section">
       <div class="content">
-        <div class="title">心理AI助手</div>
-        <div class="text">每个深夜，每个焦虑的夜晚，都有一个专业的心理AI助手在为您的支持。</div>
+        <div class="title">心晴倾听</div>
+        <div class="text">在需要被理解的时刻，用温和的智能陪伴帮助您整理情绪、看见自己。</div>
         <div class="robot">
           <el-image 
             :src="robot" 
-            alt="心理AI助手"
+            alt="心晴倾听"
             style="width: 100px;height: 100px;"
           ></el-image>
         </div>
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import robot from '@/assets/images/robot-fill.png'
+import robot from '@/assets/images/xinqing-logo.svg'
 </script>
 
 <style lang="scss" scoped>

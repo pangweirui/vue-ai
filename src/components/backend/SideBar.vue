@@ -11,17 +11,17 @@
         <el-image
           class="brand-logo"
           :src="robotIcon" 
-          alt="logo" 
+          alt="心晴倾听" 
         />
         <div class="info-card" v-if="!isCollapse">
-          <div class="brand-title">心理健康数据中台</div>
-          <div class="brand-subTitle">智能管理后台</div>
+          <div class="brand-title">心晴倾听后台</div>
+          <div class="brand-subTitle">咨询与情绪管理</div>
         </div>
       </div>
       <el-menu-item 
         v-for="item in menuItems"
         :key="item.path"
-        :index="`${backendRoute.path}/${item.path}`"
+        :index="`${backendBasePath}/${item.path}`"
         :title="item.meta?.title"
         >
         <el-icon v-if="getIcon(item.meta?.icon)">
@@ -43,8 +43,9 @@ const isCollapse=computed(()=>adminStore.isCollapse)
 const asideWidth=computed(()=>isCollapse.value?'96px':'316px')
 const route = useRoute()
 const router = useRouter()
-const backendRoute = router.options.routes[0]
-const menuItems = backendRoute.children ?? []
+const backendRoute = router.options.routes.find(item => item.path === '/back')
+const backendBasePath = backendRoute?.path ?? '/back'
+const menuItems = computed(() => backendRoute?.children ?? [])
 const activeMenu = computed(() => route.path)
 
 const iconMap = {
@@ -62,7 +63,7 @@ const getIcon = (icon: unknown) => {
   return iconMap[icon as keyof typeof iconMap]
 }
 
-const robotIcon = new URL('@/assets/images/robot.png', import.meta.url).href
+const robotIcon = new URL('@/assets/images/xinqing-logo.svg', import.meta.url).href
 
 </script>
 <style lang="scss" scoped>

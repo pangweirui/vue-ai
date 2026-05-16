@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="title">
-      <div class="backHome">
+      <div class="backHome" @click="router.push('/front/home')">
         <el-icon><Back/></el-icon>
         <span>返回首页</span>
       </div>
       <div class="text">
         <h2>登录您的账户</h2>
-        <p>登录您的账号，开始使用心理AI助手</p>
+        <p>登录您的账号，开始使用心晴倾听</p>
       </div>
     </div>
     <div class="form-container">
@@ -26,7 +26,7 @@
       </el-form>
       <div class="footer">
         <el-button class="btn" size="large" type="primary" @click="submitForm(ruleFormRef)">登录</el-button>
-        <p>还没有账户？<router-link to="/register">去注册</router-link></p>
+        <p>还没有账户？<router-link to="/auth/register">去注册</router-link></p>
       </div>
     </div>
   </div>
@@ -67,6 +67,8 @@ const submitForm = async (form) => {
             router.push('/back/dashboard')
             ElMessage.success('登录成功')
           }else{
+            router.push('/front/home')
+            ElMessage.success('登录成功')
           }
         }
       })

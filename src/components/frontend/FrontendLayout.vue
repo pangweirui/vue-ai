@@ -2,8 +2,8 @@
   <div class="frontend-layout">
     <div class="navbar-container">
       <div class="brand-section">
-        <el-image :src="logo" alt="Vue AI" class="brand-logo" />
-        <h1 class="brand-name">心理健康AI助手</h1>
+        <el-image :src="logo" alt="心晴倾听" class="brand-logo" />
+        <h1 class="brand-name">心晴倾听</h1>
       </div>
       <div class="nav-section">
           <router-link to="/front/home" active-class="active" class="nav-link" >首页</router-link>
@@ -13,7 +13,7 @@
           <el-button class="logout-btn" v-if="isLoggedIn">退出登录</el-button>
           <template v-else>
             <router-link to="/auth/login" active-class="active" class="nav-link">登录</router-link>
-            <router-link to="/register" active-class="active" class="nav-link">
+            <router-link to="/auth/register" active-class="active" class="nav-link">
               <el-button type="primary">注册</el-button>
             </router-link>
           </template>
@@ -25,7 +25,7 @@
     <div class="footer-container">
       <div class="footer-bottom">
         <div class="footer-text">
-          &copy; 2026 心理健康AI助手. All rights reserved.
+          &copy; 2026 心晴倾听. All rights reserved.
         </div>
       </div>
     </div>
@@ -34,10 +34,8 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import logo from '@/assets/images/robot.png'
+import logo from '@/assets/images/xinqing-logo.svg'
 
-const router=useRouter()
 const isLoggedIn=computed(()=>localStorage.getItem('token')!==null)
 </script>
 
@@ -74,8 +72,16 @@ const isLoggedIn=computed(()=>localStorage.getItem('token')!==null)
               color: #4b5563;
               font-size: 16px;
               font-weight: 500;
+              padding-bottom: 4px;
+              border-bottom: 2px solid transparent;
+              transition: color 0.18s ease, border-color 0.18s ease;
               &:hover {
                   color: #4A90E2;
+              }
+              &.active {
+                  color: #2563eb;
+                  border-bottom-color: #2563eb;
+                  font-weight: 700;
               }
           }
       }

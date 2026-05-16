@@ -8,6 +8,10 @@ const backendRoutes: RouteRecordRaw[] = [
   {
     path: '/back',
     component: BackEndLayout,
+    redirect: '/back/dashboard',
+    meta: {
+      requiresAuth: true,
+    },
     children: [
       {
         path: 'dashboard',
@@ -42,36 +46,6 @@ const backendRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  },
-  {
-    path:'/auth',
-    component: AuthLayout,
-    children: [
-      {
-        path:'login',
-        component: () => import('@/views/login.vue'),
-        meta:{
-          title:'登录',
-          icon:'Login'
-        }
-      },
-      {
-        path:'register',
-        component: () => import('@/views/register.vue'),
-        meta:{
-          title:'注册',
-          icon:'User'
-        }
-      }
-    ]
-  },
-  {
-    path:'/',
-    redirect:'/back/dashboard',
-      meta:{
-      title:'首页',
-      icon:'Home'
-    }
   }
 ]
 
@@ -79,6 +53,7 @@ const frontendRoutes: RouteRecordRaw[] = [
   {
     path:'/front',
     component: FrontendLayout,
+    redirect: '/front/home',
     children: [
       {
         path:'home',
@@ -113,7 +88,36 @@ const frontendRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  },
+  }
+]
+
+const authRoutes: RouteRecordRaw[] = [
+  {
+    path:'/auth',
+    component: AuthLayout,
+    redirect: '/auth/login',
+    children: [
+      {
+        path:'login',
+        component: () => import('@/views/login.vue'),
+        meta:{
+          title:'登录',
+          icon:'Login'
+        }
+      },
+      {
+        path:'register',
+        component: () => import('@/views/register.vue'),
+        meta:{
+          title:'注册',
+          icon:'User'
+        }
+      }
+    ]
+  }
+]
+
+const routes: RouteRecordRaw[] = [
   {
     path:'/',
     redirect:'/front/home',
@@ -121,21 +125,24 @@ const frontendRoutes: RouteRecordRaw[] = [
       title:'首页',
       icon:'Home'
     }
-  }
+  },
+  ...frontendRoutes,
+  ...authRoutes,
+  ...backendRoutes,
 ]
+
 export const router = createRouter({
   history: createWebHistory(),
-  routes: [...backendRoutes,...frontendRoutes],
+  routes,
 })
 
 router.beforeEach((to, _from, next) => {
-  if(localStorage.getItem('token')){
-    next()
-  }else{
-    if(to.path.startsWith('/back/dashboard')){
-      next('/auth/login')
-    }else if(to.path.startsWith('/front')){
-      next()
-    }
+  const hasToken = Boolean(localStorage.getItem('token'))
+
+  if(to.meta.requiresAuth && !hasToken){
+    next('/auth/login')
+    return
   }
+
+  next()
 })
