@@ -1,13 +1,75 @@
 <template>
-  <div>consulation</div>
+    <div class="consulation-container">
+        <div class="sidebar">
+            <!-- AI助手信息 -->
+            <div class="ai-assistant-info">
+                <div class="breathing-circle">
+                    <img :src="logo" alt="心晴倾听" style="width: 25px; height: 25px;"/>
+                </div>
+                <div class="assistant-name">心晴倾听</div>
+                <div class="online-status">
+                    <el-tag type="success">在线</el-tag>
+                </div>
+            </div>
+            <!-- 情绪花园 -->
+            <div class="emotion-garden">
+
+            </div>
+            <!-- 会话历史 -->
+            <div class="session-history">
+                <div class="session-title">会话历史</div>
+                <div class="session-list">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="chat-main">
+            <div class="chat-header ">
+                <div class="header-left">
+                    <div class="chat-avatar">
+                        <el-image :src="logo" style="width: 30px; height: 30px; border-radius: 50%;"></el-image>
+                    </div>
+                    <div class="chat-info">
+                        <h2>心晴倾听</h2>
+                        <p>心晴倾听是一个专业的心理咨询助手，您的问题将被专业处理。</p>
+                    </div>
+                </div>
+                <el-button circle @click="createNewFrontendSession" title="新建会话">
+                    <el-icon><Plus /></el-icon>
+                </el-button>
+            </div>
+            <div class="chat-messages">
+                <div v-if="message.length===0" class="message-item ai-message">
+                    <div class=message-avatar>
+                        <el-image :src="logo" style="width: 18px; height: 18px; border-radius: 50%;"></el-image>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <p>您好，我是心晴倾听，您的问题将被专业处理。</p>
+                        </div>
+                        <div class="message-time">
+                            刚刚
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import logo from '@/assets/images/xinqing-logo.svg'
+import { Plus } from '@element-plus/icons-vue'
 
+const createNewFrontendSession = () => {
+    console.log('创建新会话')
+}
+const message = ref([])
 </script>
 
 <style lang="scss" scoped>
-.consultation-container {
+.consulation-container {
     margin: 0 auto;
     width: 1200px;
     display: flex;
@@ -27,7 +89,7 @@
             .breathing-circle {
                 width: 60px;
                 height: 60px;
-                background: linear-gradient(135deg, #fb923c 0%, #f59e0b 100%);
+                // background: linear-gradient(135deg, #fb923c 0%, #f59e0b 100%);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
