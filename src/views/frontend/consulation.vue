@@ -39,7 +39,7 @@
                 </el-button>
             </div>
             <div class="chat-messages">
-                <div v-if="message.length===0" class="message-item ai-message">
+                <div v-if="sessionMessage.length===0" class="message-item ai-message">
                     <div class=message-avatar>
                         <el-image :src="logo" style="width: 18px; height: 18px; border-radius: 50%;"></el-image>
                     </div>
@@ -52,20 +52,93 @@
                         </div>
                     </div>
                 </div>
+                <!-- 消息输入区 -->
+                <div class="chat-input">
+                    <div class="input-container">
+                        <el-input
+                            v-model="userMessage"
+                            placeholder="请输入您的问题"
+                            type="textarea"
+                            :rows="3"
+                            :disabled="isAiTyping"
+                            @keydown="handleKeyDown"
+                        >
+                        </el-input>
+                    </div>
+                    <el-button type="primary" class="send-btn" @click="sendMessage">
+                        <el-icon>
+                            <Promotion/>
+                        </el-icon>
+                    </el-button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref ,onMounted} from 'vue'
+import { startSession } from '@/apis/frontend'
 import logo from '@/assets/images/xinqing-logo.svg'
 import { Plus } from '@element-plus/icons-vue'
 
-const createNewFrontendSession = () => {
-    console.log('创建新会话')
+const sessionMessage = ref([])
+const userMessage = ref('')
+const isAiTyping = ref(false)
+const currentSession=ref({})
+
+const createNewFrontendSession=async()=>{
+    const newSession={
+        sessionId: `temp_${Date.now()}`,
+        sessionTitle:'新对话',
+        status: 'TEMP',
+    }
+    currentSession.value=newSession
 }
-const message = ref([])
+const handleKeyDown = (e) => {
+    if (e.key === 'Enter'&& e.key!=='Shift') {
+        sendMessage()
+    }
+}
+
+const startNewSession=async (message)=>{
+    const sessionParams={
+        initialMessage: message,
+        sessionTitle: currentSession.value.sessionTitle || '新对话',
+    }
+    try{
+        const res= await startSession(sessionParams)
+        const sessionData={
+            sessionId: res.sessionId,
+            status: res.status,
+            sessionTitle: currentSession.value.sessionTitle || '新对话',
+        }
+        if(currentSession.value.status==='TEMP'){
+            Object.assign(currentSession.value,sessionData)
+        }
+    }catch(err){
+        return
+    }
+    
+}
+const sendMessage=()=>{
+    if(!userMessage.value.trim()){
+        return
+    }
+    if(isAiTyping.value){
+        return
+    }
+    const message=userMessage.value.trim()
+    userMessage.value=''
+    isAiTyping.value=true
+
+    if(currentSession.value.status==='TEMP'){
+        startNewSession(message)
+    }
+}
+onMounted(()=>{
+    createNewFrontendSession()
+})
 </script>
 
 <style lang="scss" scoped>

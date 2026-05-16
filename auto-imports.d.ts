@@ -8,5 +8,6 @@ export {}
 declare global {
   const ElInput: typeof import('element-plus/es').ElInput
   const ElMessage: typeof import('element-plus/es').ElMessage
+  const ElMessageBox: typeof import('element-plus/es').ElMessageBox
   const ElSelect: typeof import('element-plus/es').ElSelect
 }
