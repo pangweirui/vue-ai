@@ -1,7 +1,7 @@
 <template>
   <div class="frontend-layout">
     <div class="navbar-container">
-      <div class="brand-section">
+      <div class="brand-section" @click="handleClickBrand">
         <el-image :src="logo" alt="心晴倾听" class="brand-logo" />
         <h1 class="brand-name">心晴倾听</h1>
       </div>
@@ -45,6 +45,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { logout } from '@/apis/admin'
 import { useAdminStore } from '@/stores/admin'
 import { ElMessage } from 'element-plus'
@@ -53,6 +54,13 @@ import logo from '@/assets/images/xinqing-logo.svg'
 const isLoggedIn=computed(()=>localStorage.getItem('token')!==null)
 
 const store=useAdminStore()
+
+const router=useRouter()
+
+const handleClickBrand=()=>{
+    router.push('/front/home')
+}
+
 const handleCommand=async(command)=>{
   if (command === 'logout') {
     ElMessageBox.confirm('确定退出登录吗？', '提示', {
@@ -93,6 +101,9 @@ const handleCommand=async(command)=>{
               font-size: 24px;
               font-weight: 600;
               color: #333;
+          }
+          &:hover {
+              cursor: pointer;
           }
       }
       .nav-section {

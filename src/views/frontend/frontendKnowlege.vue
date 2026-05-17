@@ -349,7 +349,7 @@ const observeLoadTrigger = () => {
 
 const getCoverImage = (url?: string) => {
   if (!url) {
-    return 'https://file.itndedu.com/psychology_ai.png'
+    return logo
   }
 
   if (/^https?:\/\//.test(url)) {

@@ -20,6 +20,10 @@ export const getSessionDatail = (sessionId: string) => {
   return request.get(`/psychological-chat/sessions/${sessionId}/messages`)
 }
 
+export const gwtSessionEmotion = (sessionId: string) => {
+  return request.get(`/psychological-chat/session/${sessionId}/emotion`)
+}
+
 export const submitEmotionDairy = (data: any) => {
   return request.post('/emotion-diary', data)
 }
