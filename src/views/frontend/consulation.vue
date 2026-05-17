@@ -19,7 +19,47 @@
             <div class="session-history">
                 <div class="session-title">会话历史</div>
                 <div class="session-list">
-                    
+                    <div class="session-item" v-for="session in sessionList" :key="session.id" :index="session.id" @click="selectSession(session.id)" >
+                        <div class="session-info">
+                            <div class="session-title">
+                                <span>{{session.sessionTitle}}</span>
+                                <div class="session-meta">
+                                    <div class="session-time">
+                                        <span>{{session.lastMessageTime}}</span>
+                                    </div>
+                                </div>
+                                <div class="session-preview">
+                                    <span>{{ session.lastMessageContent }}</span>
+                                </div>
+                                <div class="session-stats">
+                                    <span>
+                                        <el-icon>
+                                            <ChatRound />
+                                        </el-icon>
+                                        {{ session.messageCount ?? 0 }}
+                                    </span>
+                                    <span>
+                                        <el-icon>
+                                            <Clock />
+                                        </el-icon>
+                                        {{ session.durationMinutes ?? 0 }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="session-actions">
+                                <el-dropdown>
+                                    <el-icon>
+                                        <More />
+                                    </el-icon>
+                                    <template #dropdown>
+                                        <el-menu>
+                                            <el-menu-item @click="deleteSessionById(session.id)">删除</el-menu-item>
+                                        </el-menu>
+                                    </template>
+                                </el-dropdown>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,7 +79,7 @@
                 </el-button>
             </div>
             <div class="chat-messages">
-                <div v-if="sessionMessage.length===0" class="message-item ai-message">
+                <div v-if="message.length===0" class="message-item ai-message">
                     <div class=message-avatar>
                         <el-image :src="logo" style="width: 18px; height: 18px; border-radius: 50%;"></el-image>
                     </div>
@@ -49,6 +89,31 @@
                         </div>
                         <div class="message-time">
                             刚刚
+                        </div>
+                    </div>
+                </div>
+                <div v-for="msg in message" :key="msg.id" :index="msg.id" :class="msg.senderType===1?'user-message':'ai-message'">
+                    <div class="message-avatar">
+                        <el-image :src="msg.senderType===1?logo : users" style="width: 18px; height: 18px; border-radius: 50%;"></el-image>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div 
+                                class="typing-indicator" 
+                                v-if="msg.senderType===2&&isAiTyping.value&&!msg.content"
+                            >
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                            <div v-else-if="msg.isError">
+                                {{ msg.errorMessage }}
+                            </div>
+                            <MarkdownRenderer v-else-if="msg.senderType===2 && !msg.content" :content="msg.content" :is-ai-message="true"/>
+                            <p v-else-if="msg.content" v-html="formatMessageContent(msg.content)"></p>
+                        </div>
+                        <div class="message-time">
+                            {{ msg.senderType===2&&isAiTyping.value?'正在输入中...':msg.createdAt  }}
                         </div>
                     </div>
                 </div>
@@ -78,14 +143,17 @@
 
 <script setup>
 import { ref ,onMounted} from 'vue'
-import { startSession } from '@/apis/frontend'
-import logo from '@/assets/images/xinqing-logo.svg'
+import { startSession,getSession,deleteSession,getSessionDatail } from '@/apis/frontend'
+import MarkdownRenderer from '@/components/frontend/MarkdownRenderer.vue'
 import { Plus } from '@element-plus/icons-vue'
+import logo from '@/assets/images/xinqing-logo.svg'
+import users from '@/assets/images/user.jpg'
 
-const sessionMessage = ref([])
 const userMessage = ref('')
 const isAiTyping = ref(false)
 const currentSession=ref({})
+const sessionList=ref([])
+const message=ref([])
 
 const createNewFrontendSession=async()=>{
     const newSession={
@@ -119,7 +187,7 @@ const startNewSession=async (message)=>{
     }catch(err){
         return
     }
-    
+    getSessionList()
 }
 const sendMessage=()=>{
     if(!userMessage.value.trim()){
@@ -136,8 +204,47 @@ const sendMessage=()=>{
         startNewSession(message)
     }
 }
+
+const getSessionList=async()=>{
+    try{
+        const res= await getSession(
+            {
+                pageNum: 1,
+                pageSize: 10,
+            }
+        )
+        sessionList.value=res.records ?? []
+    }catch(err){
+        return
+    }
+}
+
+const selectSession=async (sessionId)=>{
+    try{
+        const res= await getSessionDatail(sessionId)
+        console.log(res)    
+        message.value=res ?? []
+    }catch(err){
+        return
+    }
+}
+const deleteSessionById=async (sessionId)=>{
+    try{
+        await deleteSession(sessionId)
+        getSessionList()
+        ElMessage.success('删除成功')
+    }catch(err){
+        return 
+    }
+}
+
+const formatMessageContent=(content)=>{
+    return content.replace(/\n/g, '<br>')
+}
+
 onMounted(()=>{
     createNewFrontendSession()
+    getSessionList()
 })
 </script>
 

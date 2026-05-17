@@ -7,3 +7,19 @@ export const register = (data: any) => {
 export const startSession = (data: any) => {  
   return request.post('/psychological-chat/session/start', data)
 }
+
+export const getSession = (params: any) => {
+  return request.get('/psychological-chat/sessions', { params })
+}
+
+export const deleteSession = (sessionId: string) => {
+  return request.delete(`/psychological-chat/sessions/${sessionId}`)
+}
+
+export const getSessionDatail = (sessionId: string) => {
+  return request.get(`/psychological-chat/sessions/${sessionId}/messages`)
+}
+
+export const submitEmotionDairy = (data: any) => {
+  return request.post('/emotion-diary', data)
+}

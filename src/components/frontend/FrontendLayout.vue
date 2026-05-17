@@ -131,4 +131,34 @@ const handleCommand=async(command)=>{
       }
   }
 }
+
+@media (max-width: 720px) {
+  .frontend-layout {
+    .navbar-container {
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 10px 14px;
+    }
+
+    .navbar-container .brand-section .brand-name {
+      font-size: 20px;
+    }
+
+    .navbar-container .nav-section {
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px 20px;
+
+      .nav-link {
+        font-size: 14px;
+      }
+
+      :deep(.el-button) {
+        height: 32px;
+        padding: 8px 14px;
+      }
+    }
+  }
+}
 </style>

@@ -48,6 +48,8 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     EmotionalDialog: typeof import('./src/components/backend/EmotionalDialog.vue')['default']
     FrontendLayout: typeof import('./src/components/frontend/FrontendLayout.vue')['default']
+    KnowlegdgeDetail: typeof import('./src/components/frontend/KnowlegdgeDetail.vue')['default']
+    MarkdownRenderer: typeof import('./src/components/frontend/MarkdownRenderer.vue')['default']
     NavBar: typeof import('./src/components/backend/NavBar.vue')['default']
     PageHead: typeof import('./src/components/backend/pageHead.vue')['default']
     RichTextEditor: typeof import('./src/components/backend/RichTextEditor.vue')['default']
