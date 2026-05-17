@@ -12,12 +12,12 @@
             通过智能对话、情绪记录和轻量知识内容，陪伴你整理情绪、理解自己，把难开口的话慢慢说出来。
           </p>
           <div class="hero-actions">
-            <router-link to="/front/consulation">
-              <el-button class="primary-action" size="large" type="primary">开始倾诉</el-button>
-            </router-link>
-            <router-link to="/front/emotion-diary">
-              <el-button class="secondary-action" size="large">记录心情</el-button>
-            </router-link>
+            <el-button class="primary-action" size="large" type="primary" @click="goToProtected('/front/consulation')">
+              开始倾诉
+            </el-button>
+            <el-button class="secondary-action" size="large" @click="goToProtected('/front/emotion-diary')">
+              记录心情
+            </el-button>
           </div>
         </div>
 
@@ -60,7 +60,21 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import logo from '@/assets/images/xinqing-logo.svg'
+
+const router = useRouter()
+
+const goToProtected = (path) => {
+  if (!localStorage.getItem('token')) {
+    ElMessage.warning('请先登录后再使用该功能')
+    router.push('/auth/login')
+    return
+  }
+
+  router.push(path)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -142,10 +156,6 @@ import logo from '@/assets/images/xinqing-logo.svg'
     align-items: center;
     gap: 14px;
     margin-top: 34px;
-
-    a {
-      display: inline-flex;
-    }
 
     :deep(.el-button) {
       min-width: 132px;

@@ -46,10 +46,11 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import {router} from '@/router'
+import { useRouter } from 'vue-router'
 import { register } from '@/apis/frontend'
 import { ElMessage } from 'element-plus'
 
+const router = useRouter()
 const ruleFormRef = ref(null)
 
 const formData = reactive({

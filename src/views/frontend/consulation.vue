@@ -145,6 +145,7 @@
 import { ref ,onMounted} from 'vue'
 import { startSession,getSession,deleteSession,getSessionDatail } from '@/apis/frontend'
 import MarkdownRenderer from '@/components/frontend/MarkdownRenderer.vue'
+import {fetchEventSource} from 'microsoft/fetch-event-source'
 import { Plus } from '@element-plus/icons-vue'
 import logo from '@/assets/images/xinqing-logo.svg'
 import users from '@/assets/images/user.jpg'
@@ -183,11 +184,30 @@ const startNewSession=async (message)=>{
         }
         if(currentSession.value.status==='TEMP'){
             Object.assign(currentSession.value,sessionData)
+        }else{
+            currentSession.value=sessionData
         }
+        getSessionList()
+        startAIResponse(currentSession.value.sessionId,message)
     }catch(err){
         return
     }
-    getSessionList()
+}
+const startAIResponse=async (sessionId,message)=>{
+    if(isAiTyping.value){
+        ElMessage.error('AI正在输入中，请稍后')
+        return
+    }
+    isAiTyping.value=true
+    const aiMessage={
+        id:`ai_${Date.now()}_${Math.random().toString(36).substring(2,9)}`,
+        senderType: 2,
+        content: '',
+        createdAt: new Date().toLocaleString(),
+    }
+    message.value.push(aiMessage)
+    
+    
 }
 const sendMessage=()=>{
     if(!userMessage.value.trim()){
@@ -222,8 +242,13 @@ const getSessionList=async()=>{
 const selectSession=async (sessionId)=>{
     try{
         const res= await getSessionDatail(sessionId)
-        console.log(res)    
         message.value=res ?? []
+        const sessionData={
+            sessionId: res.sessionId,
+            status: res.status,
+            sessionTitle: res.sessionTitle,
+        }
+        currentSession.value=sessionData
     }catch(err){
         return
     }

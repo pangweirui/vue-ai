@@ -23,3 +23,11 @@ export const getSessionDatail = (sessionId: string) => {
 export const submitEmotionDairy = (data: any) => {
   return request.post('/emotion-diary', data)
 }
+
+export const getKnowledgeArticlePage = (params: any) => {
+  return request.get('/knowledge/article/page', { params })
+}
+
+export const getKnowledgeArticleDetail = (id: string) => {
+  return request.get(`/knowledge/article/${id}`)
+}

@@ -68,7 +68,8 @@ const frontendRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/frontend/consulation.vue'),
         meta:{
           title:'咨询记录',
-          icon:'Message'
+          icon:'Message',
+          requiresAuth: true,
         }
       },
       {
@@ -84,7 +85,16 @@ const frontendRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/frontend/emotionDairy.vue'),
         meta:{
           title:'情绪日志',
-          icon:'User'
+          icon:'User',
+          requiresAuth: true,
+        }
+      },
+      {
+        path:'knowledge/article/:id',
+        component: () => import('@/views/frontend/articleDetail.vue'),
+        meta:{
+          title:'知识文章详情',
+          icon:'ChatLineSquare'
         }
       }
     ]
@@ -139,9 +149,11 @@ export const router = createRouter({
 router.beforeEach((to, _from, next) => {
   const hasToken = Boolean(localStorage.getItem('token'))
   const isBackRoute = to.path.startsWith('/back')
+  const isAuthRoute = to.path.startsWith('/auth')
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
   if(!hasToken){
-    if(isBackRoute){
+    if(requiresAuth){
       next('/auth/login')
       return
     }
@@ -163,6 +175,8 @@ router.beforeEach((to, _from, next) => {
 
   if(userType === 1){
     if(isBackRoute){
+      next('/front/home')
+    }else if(isAuthRoute){
       next('/front/home')
     }else{
       next()
