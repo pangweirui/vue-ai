@@ -1208,6 +1208,7 @@ onBeforeUnmount(() => {
   max-height: 332px;
   overflow-y: auto;
   padding-right: 2px;
+  scrollbar-width: none;
 }
 
 .session-item {

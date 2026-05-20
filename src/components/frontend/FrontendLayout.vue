@@ -80,15 +80,28 @@ const handleCommand=async(command)=>{
 
 <style lang="scss" scoped>
 .frontend-layout {
+  --frontend-nav-height: 64px;
+
+  min-height: 100vh;
   background-color: #fff;
   .navbar-container {
-      max-width: 1200px;
-      height: 100%;
-      margin: 0 auto;
-      padding: 10px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      min-height: var(--frontend-nav-height);
+      width: 100%;
+      margin: 0;
+      padding: 10px max(14px, calc((100vw - 1200px) / 2 + 10px));
       display: flex;
       align-items: center;
       justify-content: space-between;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(12px);
       .brand-section {
           display: flex;
           align-items: center;
@@ -129,6 +142,10 @@ const handleCommand=async(command)=>{
       }
   }
 
+  .content-container {
+      padding-top: var(--frontend-nav-height);
+  }
+
   .footer-container {
       background: #1f2937;
       color: white;
@@ -145,6 +162,8 @@ const handleCommand=async(command)=>{
 
 @media (max-width: 720px) {
   .frontend-layout {
+    --frontend-nav-height: 116px;
+
     .navbar-container {
       flex-wrap: wrap;
       gap: 12px;
